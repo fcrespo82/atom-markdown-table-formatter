@@ -88,4 +88,4 @@ module.exports =
 
     selectionsRanges = editor.getSelectedBufferRanges()
 
-    editor.setTextInBufferRange(range, normtable(editor.getTextInBufferRange(range))) for range in selectionsRanges
+    editor.setTextInBufferRange(range, normtable(editor.getTextInBufferRange(range).trim())) for range in selectionsRanges
