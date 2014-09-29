@@ -1,4 +1,7 @@
-## 1.0.0
+## 1.0.2
+* Sorry to anyone using my package, had some troubles with git and remote tags. Hope this fixes everything.
+
+## 1.0.1
 * Added option to restore selections (default: false)
 * Fixed incorrect trimming of selected tables
 * Auto-select entire document if selection is empty (default: true)
