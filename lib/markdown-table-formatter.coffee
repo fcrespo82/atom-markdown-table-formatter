@@ -1,22 +1,24 @@
 module.exports =
+  configDefaults:
+    restoreSelections: false
+    autoSelectEntireDocument: true
+
   activate: ->
     atom.workspaceView.command "markdown-table-formatter:format", => @convert()
 
   convert: ->
-    editor = atom.workspace.activePaneItem
-
-    just = (string, type, n) ->
-        lenght = n - string.length
-        if type == '::'
-            return ' '.repeat(lenght/2) + string + ' '.repeat((lenght+1)/2)
-        else if type == '-:'
-            return ' '.repeat(lenght) + string
-        else if type == ':-'
-            return string + ' '.repeat(lenght)
-        else
-            return string
-
     normtable = (text) ->
+        just = (string, type, n) ->
+            lenght = n - string.length
+            if type == '::'
+                return ' '.repeat(lenght/2) + string + ' '.repeat((lenght+1)/2)
+            else if type == '-:'
+                return ' '.repeat(lenght) + string
+            else if type == ':-'
+                return string + ' '.repeat(lenght)
+            else
+                return string
+
         lines = text.split('\n')
         rows = lines.length
 
@@ -86,6 +88,26 @@ module.exports =
 
         return formatted.join('\n')
 
-    selectionsRanges = editor.getSelectedBufferRanges()
+    editor = atom.workspace.activePaneItem
 
-    editor.setTextInBufferRange(range, normtable(editor.getTextInBufferRange(range).trim())) for range in selectionsRanges
+    re = /(^\|.*\|$)\n(^\|[\W]+\|$)(\n(^\|.*\|$))+/mg;
+
+    selectionsRanges = editor.getSelectedBufferRanges()
+    initialSelectionsRanges = selectionsRanges
+
+    autoSelectEntireDocument = atom.config.get("markdown-table-formatter.autoSelectEntireDocument")
+
+    if selectionsRanges[0].isEmpty() and autoSelectEntireDocument
+        editor.selectAll()
+        selectionsRanges = editor.getSelectedBufferRanges()
+
+    myIterator = (obj) ->
+        obj.replace(normtable(obj.matchText))
+
+    for range in selectionsRanges
+        editor.backwardsScanInBufferRange(re, range, myIterator)
+
+    restoreSelections = atom.config.get("markdown-table-formatter.restoreSelections")
+
+    if restoreSelections
+        editor.setSelectedBufferRanges(initialSelectionsRanges)
