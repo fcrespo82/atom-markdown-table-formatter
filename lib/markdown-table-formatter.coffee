@@ -90,7 +90,7 @@ module.exports =
 
     editor = atom.workspace.activePaneItem
 
-    re = /(^\|.*\|$)\n(^\|[\W]+\|$)(\n(^\|.*\|$))+/mg;
+    re = /(^\|.*\|[ ]*$)\n(^\|[\W]+\|[ ]*$)(\n(^\|.*\|[ ]*$))+/mg;
 
     selectionsRanges = editor.getSelectedBufferRanges()
     initialSelectionsRanges = selectionsRanges

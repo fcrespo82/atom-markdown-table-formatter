@@ -1,3 +1,6 @@
+## 1.0.1
+* Added a fix in the regex to consider spaces at the end of each line
+
 ## 1.0.0
 * Added option to restore selections (default: false)
 * Fixed incorrect trimming of selected tables
