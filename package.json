@@ -1,15 +1,15 @@
 {
-    "name": "markdown-table-formatter",
-    "main": "./lib/markdown-table-formatter",
-    "version": "0.1.2",
-    "description": "A simple markdown plugin to format tables.",
-    "activationEvents": [
-        "markdown-table-formatter:format"
-    ],
-    "repository": "https://github.com/fcrespo82/atom-markdown-table-formatter",
-    "license": "MIT",
-    "engines": {
-        "atom": ">0.50.0"
-    },
-    "dependencies": {}
+  "name": "markdown-table-formatter",
+  "main": "./lib/markdown-table-formatter",
+  "version": "1.0.0",
+  "description": "A simple markdown plugin to format tables.",
+  "activationEvents": [
+    "markdown-table-formatter:format"
+  ],
+  "repository": "https://github.com/fcrespo82/atom-markdown-table-formatter",
+  "license": "MIT",
+  "engines": {
+    "atom": ">0.50.0"
+  },
+  "dependencies": {}
 }
