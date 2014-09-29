@@ -1,7 +1,7 @@
 {
   "name": "markdown-table-formatter",
   "main": "./lib/markdown-table-formatter",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A simple markdown plugin to format tables.",
   "activationEvents": [
     "markdown-table-formatter:format"
