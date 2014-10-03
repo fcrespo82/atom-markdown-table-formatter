@@ -1,3 +1,12 @@
+## 2.0.0
+* Added option to choose if first and last pipes should be kept
+* Added option to choose the padding of the cells
+* Added support for latest config api
+* Added specs to package
+* Changed regex to identify pipeless tables
+* Changed requirements to atom >= 0.135.0
+* Removed deprecated APIs to observe text editors
+
 ## 1.0.2
 * Sorry to anyone using my package, had some troubles with git and remote tags. Hope this fixes everything.
 
@@ -13,5 +22,5 @@
 ## 0.1.1
 * Bug fixes
 
-## 0.1.0 - First Release
+## 0.1.0
 * Every feature added
