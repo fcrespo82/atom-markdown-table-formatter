@@ -1,36 +1,45 @@
 class TableFormatter
     subscriptions: []
-    regex: /((.+?)\|)+?(.+)?\n(([:\-\|]+?)\|)+?([:\-\|]+)?[ ]*(\n((.+?)\|)+?(.+)?)+/mg
+    regex: /((.+?)\|)+?(.+)?\r?\n(([:\-\|]+?)\|)+?([:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/mg
 
     constructor: ->
         atom.workspace.observeTextEditors (editor) =>
             subscription = editor.getBuffer().onWillSave =>
                 @format editor
                 @subscriptions.push(subscription)
-                # console.log(@subscriptions)
+                # # console.log(@subscriptions)
 
     destroy: ->
         for subscription in @subscriptions
             subscription.dispose()
 
     format: (editor) ->
-        # console.log(editor)
+        # console.log(editor.getGrammar().scopeName)
         if editor.getGrammar().scopeName != 'source.gfm'
+            # console.log('exiting')
             return
 
         selectionsRanges = editor.getSelectedBufferRanges()
+        # console.log(selectionsRanges)
         initialSelectionsRanges = selectionsRanges
 
         autoSelectEntireDocument = atom.config.get("markdown-table-formatter.autoSelectEntireDocument")
 
         if selectionsRanges[0].isEmpty() and autoSelectEntireDocument
+            # console.log('all selected')
             editor.selectAll()
             selectionsRanges = editor.getSelectedBufferRanges()
 
+        # console.log('myIterator')
         myIterator = (obj) =>
+            # console.log('iterating')
             obj.replace(@formatTable(obj.matchText))
 
         for range in selectionsRanges
+            # console.log(@regex)
+            # console.log(range)
+            # console.log(myIterator)
+
             editor.backwardsScanInBufferRange(@regex, range, myIterator)
 
         restoreSelections = atom.config.get("markdown-table-formatter.restoreSelections")
@@ -39,7 +48,7 @@ class TableFormatter
             editor.setSelectedBufferRanges(initialSelectionsRanges)
 
     formatTable: (text) ->
-        # console.log(@subscriptions)
+        # console.log(text)
         just = (string, type, n) ->
             lenght = n - string.length
             if type == '::'
