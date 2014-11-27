@@ -1,3 +1,9 @@
+## 2.1.0
+
+* Fix for keeping document auto selected
+
+- - -
+
 ## 2.0.1
 
 * Fix a regression where a table wouldn't be recognized
