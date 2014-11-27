@@ -25,9 +25,11 @@ class TableFormatter
 
         autoSelectEntireDocument = atom.config.get("markdown-table-formatter.autoSelectEntireDocument")
 
+        autoSelected = false
         if selectionsRanges[0].isEmpty() and autoSelectEntireDocument
             # console.log('all selected')
             editor.selectAll()
+            autoSelected = true
             selectionsRanges = editor.getSelectedBufferRanges()
 
         # console.log('myIterator')
@@ -46,6 +48,10 @@ class TableFormatter
 
         if restoreSelections
             editor.setSelectedBufferRanges(initialSelectionsRanges)
+
+        if autoSelectEntireDocument and autoSelected
+            for selection in editor.getSelections()
+                selection.clear()
 
     formatTable: (text) ->
         # console.log(text)
