@@ -1,3 +1,7 @@
+## 2.1.1
+
+* Fix for bug #3 "Insertion Point Lost On Save"
+
 ## 2.1.0
 
 * Fix for keeping document auto selected

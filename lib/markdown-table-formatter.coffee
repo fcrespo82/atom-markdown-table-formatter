@@ -52,6 +52,7 @@ class TableFormatter
         if autoSelectEntireDocument and autoSelected
             for selection in editor.getSelections()
                 selection.clear()
+            editor.setSelectedBufferRanges(initialSelectionsRanges)
 
     formatTable: (text) ->
         # console.log(text)
