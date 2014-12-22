@@ -1,6 +1,7 @@
 class TableFormatter
     subscriptions: []
-    regex: /((.+?)\|)+?(.+)?\r?\n(([:\-\|]+?)\|)+?([:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/mg
+    #regex: /((.+?)\|)+?(.+)?\r?\n(([:\-\|]+?)\|)+?([:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/mg
+    regex: /((.+?)\|)+?(.+)?\r?\n(([\s:\-\|]+?)\|)+?([\s:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/mg
 
     constructor: ->
         atom.workspace.observeTextEditors (editor) =>
@@ -70,18 +71,21 @@ class TableFormatter
         lines = text.split('\n')
         rows = lines.length
 
-        formatline = ''
-        formatrow = 0
+        formatline = lines[1]
+        formatrow = 1
         for line, i in lines
-            if /\|[|:.-]+/.exec(line) != null
+            if !/\w/.exec(line)
                 formatline = line
                 formatrow = i
+                # console.log(formatline)
+                # console.log(formatrow)
                 break
 
         removeFormatRow = (s) ->
-             return !/\|[|:.-]+/.exec(s)
+             return /\w/.exec(s)
 
         lines = lines.filter(removeFormatRow)
+        # console.log(lines)
 
         formatline = formatline.trim().replace(/(^\||\|$)/g,"")
         fstrings = formatline.split('|')
