@@ -74,7 +74,8 @@ class TableFormatter
         formatline = lines[1]
         formatrow = 1
         for line, i in lines
-            if !/\w/.exec(line)
+            # Add suport for analphabetic char
+            if !/(\w|[^\s\-\|\:])/.exec(line)
                 formatline = line
                 formatrow = i
                 # console.log(formatline)
@@ -82,7 +83,8 @@ class TableFormatter
                 break
 
         removeFormatRow = (s) ->
-             return /\w/.exec(s)
+             # Add suport for analphabetic char
+             return /(\w|[^\s\-\|\:])/.exec(s)
 
         lines = lines.filter(removeFormatRow)
         # console.log(lines)
@@ -92,12 +94,13 @@ class TableFormatter
         justify = []
         for cell in fstrings
             ends = cell[0] + (cell[cell.length-1] || '')
-            if ends == '::'
-                justify.push('::')
+            # Change default alignment to Center
+            if ends == ':-'
+                justify.push(':-')
             else if ends == '-:'
                 justify.push('-:')
             else
-                justify.push(':-')
+                justify.push('::')
 
         columns = justify.length
 
