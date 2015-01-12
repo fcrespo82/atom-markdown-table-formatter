@@ -2,7 +2,7 @@ class TableFormatter
     subscriptions: []
     #regex: /((.+?)\|)+?(.+)?\r?\n(([:\-\|]+?)\|)+?([:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/mg
     regex: /((.+?)\|)+?(.+)?\r?\n(([\s:\-\|]+?)\|)+?([\s:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/mg
-
+                            
     constructor: ->
         atom.workspace.observeTextEditors (editor) =>
             subscription = editor.getBuffer().onWillSave =>
@@ -73,18 +73,7 @@ class TableFormatter
 
         formatline = lines[1]
         formatrow = 1
-        for line, i in lines
-            if !/\w/.exec(line)
-                formatline = line
-                formatrow = i
-                # console.log(formatline)
-                # console.log(formatrow)
-                break
-
-        removeFormatRow = (s) ->
-             return /\w/.exec(s)
-
-        lines = lines.filter(removeFormatRow)
+        lines.splice(1,1) # Remove the index 1 of the array
         # console.log(lines)
 
         formatline = formatline.trim().replace(/(^\||\|$)/g,"")
