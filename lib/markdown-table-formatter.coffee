@@ -112,10 +112,12 @@ class TableFormatter
         widths.push(2) for c in [0..columns-1]
 
         max = (x, y) -> if x > y then x else y
+        
+        halfWidthLength = -> if str.match(/[^ -~]/g) is null then str.length else str.length + str.match(/[^ -~]/g).length
 
         for row in content
             for i in [0..columns-1]
-                widths[i] = max(row[i].length, widths[i])
+                widths[i] = max(halfWidthLength(row[i]), widths[i])
 
         formatted = []
         for row in content
