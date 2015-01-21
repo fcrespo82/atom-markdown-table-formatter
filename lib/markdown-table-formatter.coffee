@@ -113,7 +113,7 @@ class TableFormatter
 
         max = (x, y) -> if x > y then x else y
         
-        halfWidthLength = -> if str.match(/[^ -~]/g) is null then str.length else str.length + str.match(/[^ -~]/g).length
+        halfWidthLength = (str) -> if str.match(/[^ -~]/g) is null then str.length else str.length + str.match(/[^ -~]/g).length
 
         for row in content
             for i in [0..columns-1]
