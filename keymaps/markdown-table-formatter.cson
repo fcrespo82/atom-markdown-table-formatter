@@ -7,5 +7,5 @@
 
 # For more detailed documentation see
 # https://atom.io/docs/latest/advanced/keymaps
-'.workspace':
-    'alt-shift-t': 'markdown-table-formatter:format'
+'atom-text-editor':
+  'alt-shift-t': 'markdown-table-formatter:format'

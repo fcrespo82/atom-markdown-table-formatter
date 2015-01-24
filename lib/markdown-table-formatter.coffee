@@ -1,37 +1,34 @@
+{CompositeDisposable} = require('atom')
+
 class TableFormatter
     subscriptions: []
     #regex: /((.+?)\|)+?(.+)?\r?\n(([:\-\|]+?)\|)+?([:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/mg
-    regex: /((.+?)\|)+?(.+)?\r?\n(([\s:\-\|]+?)\|)+?([\s:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/mg
+    regex: /((.+?)\|)+?(.+)?\r?\n(([\s:\-\|]+?)\|)+?([\s:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/g
 
     constructor: ->
+        @subscriptions = new CompositeDisposable
         atom.workspace.observeTextEditors (editor) =>
-            subscription = editor.getBuffer().onWillSave =>
-                @format editor
-                @subscriptions.push(subscription)
-                # # console.log(@subscriptions)
+            @subscriptions.add editor.getBuffer().onWillSave =>
+                @format editor, true if atom.config.get("markdown-table-formatter.formatOnSave")
 
     destroy: ->
-        for subscription in @subscriptions
-            subscription.dispose()
+        @subscriptions.dispose()
 
-    format: (editor) ->
+    format: (editor,force) ->
         # console.log(editor.getGrammar().scopeName)
         if editor.getGrammar().scopeName != 'source.gfm'
             # console.log('exiting')
             return
 
         selectionsRanges = editor.getSelectedBufferRanges()
-        # console.log(selectionsRanges)
-        initialSelectionsRanges = selectionsRanges
+        # console.log(selectionsRanges[0].isEmpty())
 
         autoSelectEntireDocument = atom.config.get("markdown-table-formatter.autoSelectEntireDocument")
+        # console.log(autoSelectEntireDocument)
 
-        autoSelected = false
-        if selectionsRanges[0].isEmpty() and autoSelectEntireDocument
+        if force or (selectionsRanges[0].isEmpty() and autoSelectEntireDocument)
             # console.log('all selected')
-            editor.selectAll()
-            autoSelected = true
-            selectionsRanges = editor.getSelectedBufferRanges()
+            selectionsRanges = [editor.getBuffer().getRange()]
 
         # console.log('myIterator')
         myIterator = (obj) =>
@@ -44,16 +41,6 @@ class TableFormatter
             # console.log(myIterator)
 
             editor.backwardsScanInBufferRange(@regex, range, myIterator)
-
-        restoreSelections = atom.config.get("markdown-table-formatter.restoreSelections")
-
-        if restoreSelections
-            editor.setSelectedBufferRanges(initialSelectionsRanges)
-
-        if autoSelectEntireDocument and autoSelected
-            for selection in editor.getSelections()
-                selection.clear()
-            editor.setSelectedBufferRanges(initialSelectionsRanges)
 
     formatTable: (text) ->
         # console.log(text)
@@ -155,10 +142,10 @@ class TableFormatter
 
 module.exports =
     config:
-        restoreSelections:
+        formatOnSave:
             type: 'boolean'
-            default: false
-            description: 'Restore your selections? Could select incorrect/incomplete text'
+            default: true
+            description: 'Format tables when document is saved?'
         autoSelectEntireDocument:
             type: 'boolean'
             default: true
@@ -173,11 +160,11 @@ module.exports =
             description: 'Keep first and last pipes "|" in table formatting.\nTables are easier to format when pipes are kept'
 
     activate: ->
-        #Register command to workspace
-        atom.workspaceView.command "markdown-table-formatter:format", =>
-            @format()
         @tableFormatter = new TableFormatter()
+        #Register command to workspace
+        @command=atom.commands.add "atom-text-editor", "markdown-table-formatter:format", (event) =>
+            @tableFormatter.format(event.target.getModel())
 
-    format: ->
-        editor = atom.workspace.activePaneItem
-        @tableFormatter.format editor
+    deactivate: ->
+        @command.dispose()
+        @tableFormatter.destroy()
