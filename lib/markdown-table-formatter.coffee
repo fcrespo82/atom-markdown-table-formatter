@@ -3,7 +3,7 @@
 class TableFormatter
     subscriptions: []
     #regex: /((.+?)\|)+?(.+)?\r?\n(([:\-\|]+?)\|)+?([:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/mg
-    regex: /((.+?)\|)+?(.+)?\r?\n(([\s:\-\|]+?)\|)+?([\s:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/g
+    regex: /((?:(?:[^\n]*?\|[^\n]*) *\r?\n)?)((?:\| *:?-+:? *|\|?(?: *:?-+:? *\|)+)(?: *:?-+:? *)? *\r?\n)((?:(?:[^\n]*?\|[^\n]*) *\r?\n)+)/g
 
     constructor: ->
         @subscriptions = new CompositeDisposable
@@ -33,7 +33,7 @@ class TableFormatter
         # console.log('myIterator')
         myIterator = (obj) =>
             # console.log('iterating')
-            obj.replace(@formatTable(obj.matchText))
+            obj.replace(@formatTable(obj.match))
 
         for range in selectionsRanges
             # console.log(@regex)
@@ -55,29 +55,22 @@ class TableFormatter
             else
                 return string
 
-        lines = text.split('\n')
+        formatline = text[2].trim()
+        headerline = text[1].trim()
+
+        if headerline.length==0
+            formatrow=0
+            lines = text[3].trim().split('\n')
+        else
+            formatrow=1
+            lines = (text[1]+text[3]).trim().split('\n')
         rows = lines.length
-
-        formatline = lines[1]
-        formatrow = 1
-        for line, i in lines
-            if !/\w/.exec(line)
-                formatline = line
-                formatrow = i
-                # console.log(formatline)
-                # console.log(formatrow)
-                break
-
-        removeFormatRow = (s) ->
-             return /\w/.exec(s)
-
-        lines = lines.filter(removeFormatRow)
-        # console.log(lines)
 
         formatline = formatline.trim().replace(/(^\||\|$)/g,"")
         fstrings = formatline.split('|')
         justify = []
         for cell in fstrings
+            cell=cell.trim()
             ends = cell[0] + (cell[cell.length-1] || '')
             if ends == '::'
                 justify.push('::')
@@ -138,7 +131,7 @@ class TableFormatter
 
         formatted.splice(formatrow, 0, [formatline]);
 
-        return formatted.join('\n')
+        return formatted.join('\n')+'\n'
 
 module.exports =
     config:
