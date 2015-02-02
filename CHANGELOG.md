@@ -1,6 +1,20 @@
+## 2.3.0
+
+* Merged changes from #7 and #8
+
+**Now the package is ready for Atom API 1.0**
+
+- - -
+
+## 2.2.0
+
+* Merge branch 'lierdakil-newregex' lierdakil@08374da6c9ec2bb35d35bc666c0408929448fe37
+
 ## 2.1.1
 
 * Fix for bug #3 "Insertion Point Lost On Save"
+
+- - -
 
 ## 2.1.0
 
