@@ -1,6 +1,8 @@
 ## 2.4.1
 
 * Fix #11
+* Settings are now handled via fields to facilitate easier testing
+* Update specs
 
 ## 2.4.0
 
