@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Fix #11
+
 ## 2.4.0
 
 * Fixed stray `if` from #7
