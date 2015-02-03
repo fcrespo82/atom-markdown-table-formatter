@@ -6,10 +6,29 @@ class TableFormatter
     #regex: /((.+?)\|)+?(.+)?\r?\n(([:\-\|]+?)\|)+?([:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/mg
 
     constructor: ->
-        @subscriptions = new CompositeDisposable
-        atom.workspace.observeTextEditors (editor) =>
-            @subscriptions.add editor.getBuffer().onWillSave =>
-                @format editor, true if atom.config.get("markdown-table-formatter.formatOnSave")
+      @subscriptions = new CompositeDisposable
+      @initConfig()
+      atom.workspace.observeTextEditors (editor) =>
+        @subscriptions.add editor.getBuffer().onWillSave =>
+          @format editor, true if @formatOnSave
+
+    readConfig: (key,callback) ->
+      key='markdown-table-formatter.'+key
+      @subscriptions.add atom.config.onDidChange key, callback
+      callback
+        newValue: atom.config.get(key)
+        oldValue: undefined
+
+    initConfig: () ->
+      @readConfig "autoSelectEntireDocument", ({newValue}) =>
+        @autoSelectEntireDocument = newValue
+      @readConfig "spacePadding", ({newValue}) =>
+        @spacePadding = newValue
+      @readConfig "keepFirstAndLastPipes", ({newValue}) =>
+        @keepFirstAndLastPipes = newValue
+      @readConfig "formatOnSave", ({newValue}) =>
+        @formatOnSave = newValue
+
 
     destroy: ->
         @subscriptions.dispose()
@@ -22,11 +41,9 @@ class TableFormatter
 
         selectionsRanges = editor.getSelectedBufferRanges()
         # console.log(selectionsRanges[0].isEmpty())
+        # console.log(@autoSelectEntireDocument)
 
-        autoSelectEntireDocument = atom.config.get("markdown-table-formatter.autoSelectEntireDocument")
-        # console.log(autoSelectEntireDocument)
-
-        if force or (selectionsRanges[0].isEmpty() and autoSelectEntireDocument)
+        if force or (selectionsRanges[0].isEmpty() and @autoSelectEntireDocument)
             # console.log('all selected')
             selectionsRanges = [editor.getBuffer().getRange()]
 
@@ -81,13 +98,11 @@ class TableFormatter
 
         columns = justify.length
 
-        spacePadding = atom.config.get("markdown-table-formatter.spacePadding")
-
         content = []
         for line in lines
             line = line.trim().replace(/(^\||\|$)/g,"")
             cells = line.split('|')
-            linecontent = ( ' '.repeat(spacePadding) + x.trim() + ' '.repeat(spacePadding) for x in cells )
+            linecontent = ( ' '.repeat(@spacePadding) + x.trim() + ' '.repeat(@spacePadding) for x in cells )
             content.push(linecontent)
 
         rows = content.length
@@ -109,29 +124,28 @@ class TableFormatter
         for row in content
             line = []
             for i in [0..columns-1]
-                text = just(row[i], justify[i], widths[i])
-                line.push(text)
+                newtext = just(row[i], justify[i], widths[i])
+                line.push(newtext)
 
-            keepFirstAndLastPipes = atom.config.get("markdown-table-formatter.keepFirstAndLastPipes")
-
-            if keepFirstAndLastPipes
+            if @keepFirstAndLastPipes
                 formatted.push('|' + line.join('|') + '|')
             else
                 formatted.push(line.join('|'))
 
         formattedformatline = []
         for i in [0..columns-1]
-           text = justify[i][0] + '-'.repeat((widths[i]-2)) + justify[i][justify[i].length-1]
-           formattedformatline.push(text)
+           newtext = justify[i][0] + '-'.repeat((widths[i]-2)) + justify[i][justify[i].length-1]
+           formattedformatline.push(newtext)
         #formatline = '|' + formattedformatline.join('|') + '|'
 
-        if keepFirstAndLastPipes
+        if @keepFirstAndLastPipes
             formatline = '|' + formattedformatline.join('|') + '|'
         else
             formatline = formattedformatline.join('|')
 
         formatted.splice(formatrow, 0, [formatline]);
+        fmtstr = formatted.join('\n')+'\n'
+        fmtstr = '\n'+fmtstr if headerline.length==0 and text[1]!=''
+        return fmtstr
 
-        return formatted.join('\n')+'\n'
-
-    regex: /((?:(?:[^\n]*?\|[^\n]*) *\r?\n)?)((?:\| *:?-+:? *|\|?(?: *:?-+:? *\|)+)(?: *:?-+:? *)? *\r?\n)((?:(?:[^\n]*?\|[^\n]*) *\r?\n)+)/g
+    regex: /((?:(?:[^\n]*?\|[^\n]*) *)?(?:\r?\n|^))((?:\| *:?-+:? *|\|?(?: *:?-+:? *\|)+)(?: *:?-+:? *)? *\r?\n)((?:(?:[^\n]*?\|[^\n]*) *\r?\n)+)/g
