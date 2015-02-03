@@ -16,6 +16,8 @@ describe "When formatting a table", ->
         expect(testTable).toMatch(MarkdownTableFormatter.tableFormatter.regex)
 
     it "should properly format this table", ->
+      MarkdownTableFormatter.tableFormatter.spacePadding = 1
+      MarkdownTableFormatter.tableFormatter.keepFirstAndLastPipes = true
       table = MarkdownTableFormatter.tableFormatter.regex.exec testTable
       formatted=MarkdownTableFormatter.tableFormatter.formatTable table
       expect(formatted).toEqual(expectedTable)
@@ -24,5 +26,9 @@ describe "When formatting a table", ->
       editor=new TextEditor(atom.workspace)
       editor.getGrammar().scopeName='source.gfm'
       editor.setText(testTable+"asd\n\n"+testTable)
+      MarkdownTableFormatter.tableFormatter.spacePadding = 1
+      MarkdownTableFormatter.tableFormatter.keepFirstAndLastPipes = true
+      MarkdownTableFormatter.tableFormatter.autoSelectEntireDocument = true
+      MarkdownTableFormatter.tableFormatter.formatOnSave = false
       MarkdownTableFormatter.tableFormatter.format editor
       expect(editor.getText()).toEqual(expectedTable+"asd\n\n"+expectedTable)
