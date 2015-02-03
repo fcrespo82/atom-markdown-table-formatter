@@ -99,7 +99,7 @@ class TableFormatter
         widths.push(2) for c in [0..columns-1]
 
         max = (x, y) -> if x > y then x else y
-        halfWidthLength = (str) -> if str.length + (str.match(/[^ -~]/g)?.length or 0)
+        halfWidthLength = (str) -> str.length + (str.match(/[^ -~]/g)?.length or 0)
 
         for row in content
             for i in [0..columns-1]

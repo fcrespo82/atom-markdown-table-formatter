@@ -1,3 +1,7 @@
+## 2.3.1
+
+* Fixed stray `if` from #7
+
 ## 2.3.0
 
 * Merged changes from #7 and #8
