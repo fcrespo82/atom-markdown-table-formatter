@@ -1,3 +1,9 @@
+## 2.3.1
+
+* Fixed stray `if` from #7
+
+I'm very sorry for this bug. I didn't tested because today was my first day at work after my vacation. Things were a little crazy. I promisse I'll be more careful from now on.
+
 ## 2.3.0
 
 * Merged changes from #7 and #8
