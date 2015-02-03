@@ -109,8 +109,8 @@ class TableFormatter
         for row in content
             line = []
             for i in [0..columns-1]
-                text = just(row[i], justify[i], widths[i])
-                line.push(text)
+                newtext = just(row[i], justify[i], widths[i])
+                line.push(newtext)
 
             keepFirstAndLastPipes = atom.config.get("markdown-table-formatter.keepFirstAndLastPipes")
 
@@ -121,8 +121,8 @@ class TableFormatter
 
         formattedformatline = []
         for i in [0..columns-1]
-           text = justify[i][0] + '-'.repeat((widths[i]-2)) + justify[i][justify[i].length-1]
-           formattedformatline.push(text)
+           newtext = justify[i][0] + '-'.repeat((widths[i]-2)) + justify[i][justify[i].length-1]
+           formattedformatline.push(newtext)
         #formatline = '|' + formattedformatline.join('|') + '|'
 
         if keepFirstAndLastPipes
@@ -131,7 +131,8 @@ class TableFormatter
             formatline = formattedformatline.join('|')
 
         formatted.splice(formatrow, 0, [formatline]);
+        fmtstr = formatted.join('\n')+'\n'
+        fmtstr = '\n'+fmtstr if headerline.length==0 and text[1]!=''
+        return fmtstr
 
-        return formatted.join('\n')+'\n'
-
-    regex: /((?:(?:[^\n]*?\|[^\n]*) *\r?\n)?)((?:\| *:?-+:? *|\|?(?: *:?-+:? *\|)+)(?: *:?-+:? *)? *\r?\n)((?:(?:[^\n]*?\|[^\n]*) *\r?\n)+)/g
+    regex: /((?:(?:[^\n]*?\|[^\n]*) *)?(?:\r?\n|^))((?:\| *:?-+:? *|\|?(?: *:?-+:? *\|)+)(?: *:?-+:? *)? *\r?\n)((?:(?:[^\n]*?\|[^\n]*) *\r?\n)+)/g
