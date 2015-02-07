@@ -62,7 +62,7 @@ class TableFormatter
     formatTable: (text) ->
         # console.log(text)
         just = (string, type, n) ->
-            lenght = n - string.length
+            lenght = n - halfWidthLength(string)
             if type == '::'
                 return ' '.repeat(lenght/2) + string + ' '.repeat((lenght+1)/2)
             else if type == '-:'
