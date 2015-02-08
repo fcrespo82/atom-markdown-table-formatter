@@ -1,3 +1,7 @@
+## 2.4.2
+* Update specs to check more cases
+* Put all extra content into last cell
+
 ## 2.4.1
 
 * Fix #11
