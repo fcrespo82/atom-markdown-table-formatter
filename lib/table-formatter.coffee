@@ -102,6 +102,8 @@ class TableFormatter
         for line in lines
             line = line.trim().replace(/(^\||\|$)/g,"")
             cells = line.split('|')
+            #put all extra content into last cell
+            cells[columns-1]=cells.slice(columns-1).join('|')
             linecontent = ( ' '.repeat(@spacePadding) + x.trim() + ' '.repeat(@spacePadding) for x in cells )
             content.push(linecontent)
 
