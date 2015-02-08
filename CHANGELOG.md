@@ -1,6 +1,7 @@
 ## 2.4.2
 * Update specs to check more cases
 * Put all extra content into last cell
+* Correct CJK character width counting
 
 ## 2.4.1
 
