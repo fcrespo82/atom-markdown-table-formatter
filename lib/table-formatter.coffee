@@ -28,7 +28,6 @@ class TableFormatter
     @readConfig "formatOnSave", ({newValue}) =>
       @formatOnSave = newValue
 
-
   destroy: ->
     @subscriptions.dispose()
 
