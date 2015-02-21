@@ -163,7 +163,7 @@ class TableFormatter
       (?:
         (?:[^\n]*?\|[^\n]*)       # line w/ at least one pipe
         \ *                       # maybe trailing whitespace
-        \r?\n                     # newline
+        (?:\r?\n|$)               # newline
       )+ # at least one
     )
     ///g
