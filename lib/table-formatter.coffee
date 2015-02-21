@@ -1,4 +1,4 @@
-{CompositeDisposable} = require('atom')
+{CompositeDisposable,Range} = require('atom')
 wcswidth = require 'wcwidth'
 
 module.exports =
@@ -38,8 +38,23 @@ class TableFormatter
 
     selectionsRanges = editor.getSelectedBufferRanges()
 
+    bufferRange=editor.getBuffer().getRange()
     if force or (selectionsRanges[0].isEmpty() and @autoSelectEntireDocument)
-      selectionsRanges = [editor.getBuffer().getRange()]
+      selectionsRanges = [bufferRange]
+    else
+      selectionsRanges=
+        for srange in selectionsRanges
+          start = bufferRange.start
+          end = bufferRange.end
+          editor.scanInBufferRange /^$/m,
+            new Range(srange.start,bufferRange.end),
+            ({range})->
+              end=range.start
+          editor.backwardsScanInBufferRange /^$/m,
+            new Range(bufferRange.start,srange.end),
+            ({range})->
+              start=range.start
+          new Range(start,end)
 
     myIterator = (obj) =>
       obj.replace(@formatTable(obj.match))
