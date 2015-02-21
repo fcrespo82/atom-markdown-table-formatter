@@ -45,7 +45,8 @@ class TableFormatter
       selectionsRanges = [bufferRange]
     else
       selectionsRanges=
-        for srange in selectionsRanges
+        for srange in selectionsRanges when not (srange.isEmpty() and
+            @autoSelectEntireDocument)
           start = bufferRange.start
           end = bufferRange.end
           editor.scanInBufferRange /^$/m,
