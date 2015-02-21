@@ -1,4 +1,5 @@
 {CompositeDisposable} = require('atom')
+wcswidth = require 'wcwidth'
 
 module.exports =
 class TableFormatter
@@ -47,9 +48,8 @@ class TableFormatter
       editor.backwardsScanInBufferRange(@regex, range, myIterator)
 
   formatTable: (text) ->
-    # console.log(text)
     just = (string, type, n) ->
-      length = n - halfWidthLength(string)
+      length = n - wcswidth(string)
       if type == '::'
         return ' '.repeat(length/2) + string + ' '.repeat((length+1)/2)
       else if type == '-:'
@@ -107,11 +107,10 @@ class TableFormatter
     widths.push(2) for c in [0..columns-1]
 
     max = (x, y) -> if x > y then x else y
-    halfWidthLength = (str) -> str.length + (str.match(/[^ -~]/g)?.length or 0)
 
     for row in content
       for i in [0..columns-1]
-        widths[i] = max(halfWidthLength(row[i]), widths[i])
+        widths[i] = max(wcswidth(row[i]), widths[i])
 
     formatted = []
     for row in content
