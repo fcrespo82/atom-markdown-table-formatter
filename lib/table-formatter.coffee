@@ -154,7 +154,8 @@ class TableFormatter
         \|\ *:?-+:?\ *            # format starting w/pipe
         |\|?(?:\ *:?-+:?\ *\|)+   # or separated by pipe
       )
-      (?:\ *:?-+:?\ *)?\ *        # maybe w/o trailing pipe
+      (?:\ *:?-+:?\ *)?           # maybe w/o trailing pipe
+      \ *                         # maybe trailing whitespace
       \r?\n                       # newline
     )
     ( # body capture
