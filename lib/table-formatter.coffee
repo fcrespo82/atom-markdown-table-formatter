@@ -3,7 +3,6 @@
 module.exports =
 class TableFormatter
     subscriptions: []
-    #regex: /((.+?)\|)+?(.+)?\r?\n(([:\-\|]+?)\|)+?([:\-\|]+)?[ ]*(\r?\n((.+?)\|)+?(.+)?)+/mg
 
     constructor: ->
       @subscriptions = new CompositeDisposable
@@ -34,29 +33,18 @@ class TableFormatter
         @subscriptions.dispose()
 
     format: (editor,force) ->
-        # console.log(editor.getGrammar().scopeName)
         if editor.getGrammar().scopeName != 'source.gfm'
-            # console.log('exiting')
             return
 
         selectionsRanges = editor.getSelectedBufferRanges()
-        # console.log(selectionsRanges[0].isEmpty())
-        # console.log(@autoSelectEntireDocument)
 
         if force or (selectionsRanges[0].isEmpty() and @autoSelectEntireDocument)
-            # console.log('all selected')
             selectionsRanges = [editor.getBuffer().getRange()]
 
-        # console.log('myIterator')
         myIterator = (obj) =>
-            # console.log('iterating')
             obj.replace(@formatTable(obj.match))
 
         for range in selectionsRanges
-            # console.log(@regex)
-            # console.log(range)
-            # console.log(myIterator)
-
             editor.backwardsScanInBufferRange(@regex, range, myIterator)
 
     formatTable: (text) ->
@@ -138,7 +126,6 @@ class TableFormatter
         for i in [0..columns-1]
            newtext = justify[i][0] + '-'.repeat((widths[i]-2)) + justify[i][justify[i].length-1]
            formattedformatline.push(newtext)
-        #formatline = '|' + formattedformatline.join('|') + '|'
 
         if @keepFirstAndLastPipes
             formatline = '|' + formattedformatline.join('|') + '|'
