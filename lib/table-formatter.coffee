@@ -49,13 +49,13 @@ class TableFormatter
   formatTable: (text) ->
     # console.log(text)
     just = (string, type, n) ->
-      lenght = n - halfWidthLength(string)
+      length = n - halfWidthLength(string)
       if type == '::'
-        return ' '.repeat(lenght/2) + string + ' '.repeat((lenght+1)/2)
+        return ' '.repeat(length/2) + string + ' '.repeat((length+1)/2)
       else if type == '-:'
-        return ' '.repeat(lenght) + string
+        return ' '.repeat(length) + string
       else if type == ':-'
-        return string + ' '.repeat(lenght)
+        return string + ' '.repeat(length)
       else
         return string
 
