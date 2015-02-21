@@ -39,7 +39,9 @@ class TableFormatter
     selectionsRanges = editor.getSelectedBufferRanges()
 
     bufferRange=editor.getBuffer().getRange()
-    if force or (selectionsRanges[0].isEmpty() and @autoSelectEntireDocument)
+    selectionsRangesEmpty =
+      selectionsRanges.every (i) -> i.isEmpty()
+    if force or (selectionsRangesEmpty and @autoSelectEntireDocument)
       selectionsRanges = [bufferRange]
     else
       selectionsRanges=
