@@ -308,6 +308,18 @@ describe "When formatting a table", ->
       "|:------------|:--------|\n"+
       "| тело        | таблицы |\n"+
       "| продолжение | тела    |\n"
+  ,
+    # regression test for #16
+    test:
+      "| test | table | with| many | columns |\n"+
+      "|-|-|-|-|-\n"+
+      "|asd\n"+
+      "|dsa\n"
+    expected:
+      "| test | table | with | many | columns |\n"+
+      "|:-----|:------|:-----|:-----|:--------|\n"+
+      "| asd  |       |      |      |         |\n"+
+      "| dsa  |       |      |      |         |\n"
   ]
   nonTables=[
     "aaa|dafdas|adfas\n"+

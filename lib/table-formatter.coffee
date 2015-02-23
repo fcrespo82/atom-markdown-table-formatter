@@ -112,7 +112,7 @@ class TableFormatter
       linecontent =
         for x in cells
           ' '.repeat(@spacePadding) +
-          x.trim() +
+          (if x? then x.trim() else "") +
           ' '.repeat(@spacePadding)
       content.push(linecontent)
 
