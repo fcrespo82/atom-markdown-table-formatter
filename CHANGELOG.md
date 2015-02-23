@@ -1,16 +1,16 @@
 ## 2.5.0
 
-* Removed unnecessary comments - c01daaf
-* Code format - 9bec21a
-* Add possible EOF at table body end - This will allow for capturing tables that are at end of file w/o trailing newline - 0288974
-* Extra newline removed - a58db64
-* Fix typo - b0a5323
-* Add testcases for Chinese and Russian tables - 8f0a05e
-* Use wcwidth - 4e258ce
-* Small regex format update - 0d115b6
-* Extend selections to whole tables - e960df1
-* Only auto-select document if all ranges are empty - 4376aed
-* Only extend ranges when not empty or not ASED (auto-select entire document - 1e1f7a0
+* Removed unnecessary comments
+* Code format
+* Add possible EOF at table body end will allow for capturing tables that are at end of file w/o trailing newline
+* Extra newline removed
+* Fix typo
+* Add testcases for Chinese and Russian tables
+* Use wcwidth
+* Small regex format update
+* Extend selections to whole tables
+* Only auto-select document if all ranges are empty
+* Only extend ranges when not empty or not ASED (auto-select entire document
 
 
 ## 2.4.2
