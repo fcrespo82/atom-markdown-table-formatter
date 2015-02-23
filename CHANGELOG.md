@@ -1,3 +1,6 @@
+## 2.5.1
+* Fix #16
+
 ## 2.5.0
 
 * Removed unnecessary comments
