@@ -1,9 +1,9 @@
 {CompositeDisposable, Range} = require('atom')
 wcswidth = require 'wcwidth'
 
-# DEBUG = true
-
 swidth = (str) ->
+  # zero-width Unicode characters that we should ignore for
+  # purposes of computing string "display" width
   zwcrx = /[\u200B-\u200D\uFEFF\u00AD]/g
   wcswidth(str) - ( str.match(zwcrx)?.length or 0 )
 
@@ -72,98 +72,79 @@ class TableFormatter
       editor.backwardsScanInBufferRange(@regex, range, myIterator)
 
   formatTable: (text) ->
-    just = (string, type, n) ->
-      length = n - swidth(string)
-      if type is '::'
-        return ' '.repeat(length / 2) + string + ' '.repeat((length + 1) / 2)
-      else if type is '-:'
-        return ' '.repeat(length) + string
-      else if type is ':-'
-        return string + ' '.repeat(length)
+    padding = (len, str = ' ') -> str.repeat len
+
+    stripTailPipes = (str) ->
+      str.trim().replace /(^\||\|$)/g, ""
+
+    splitCells = (str) ->
+      str.split '|'
+
+    addTailPipes = (str) =>
+      if @keepFirstAndLastPipes
+        "|#{str}|"
       else
-        return string
+        str
+
+    joinCells = (arr) ->
+      arr.join '|'
 
     formatline = text[2].trim()
     headerline = text[1].trim()
 
-    if headerline.length is 0
-      formatrow = 0
-      lines = text[3].trim().split('\n')
-    else
-      formatrow = 1
-      lines = (text[1] + text[3]).trim().split('\n')
-    rows = lines.length
-
-    formatline = formatline.trim().replace(/(^\||\|$)/g, "")
-    fstrings = formatline.split('|')
-    justify = []
-    for cell in fstrings
-      cell = cell.trim()
-      ends = cell[0] + (cell[cell.length - 1] or '')
-      if ends is '::'
-        justify.push('::')
-      else if ends is '-:'
-        justify.push('-:')
+    [formatrow, data] =
+      if headerline.length is 0
+        [ 0, text[3] ]
       else
-        justify.push(':-')
+        [ 1, text[1] + text[3] ]
+    lines = data.trim().split('\n')
+
+    justify = for cell in splitCells stripTailPipes formatline
+      [first, ..., last] = cell.trim()
+      switch ends = (first ? ':') + (last ? '')
+        when '::', '-:' then ends
+        else ':-'
 
     columns = justify.length
 
-    content = []
-    for line in lines
-      line = line.trim().replace(/(^\||\|$)/g, "")
-      cells = line.split('|')
+    content = for line in lines
+      cells =  splitCells stripTailPipes line
       #put all extra content into last cell
-      cells[columns - 1] = cells.slice(columns - 1).join('|')
-      linecontent =
-        for x in cells
-          ' '.repeat(@spacePadding) +
-          (if x? then x.trim() else "") +
-          ' '.repeat(@spacePadding)
-      content.push(linecontent)
+      cells[columns - 1] = joinCells cells.slice(columns - 1)
+      for cell in cells
+        padding(@spacePadding) +
+        (cell?.trim?() ? '') +
+        padding(@spacePadding)
 
-    rows = content.length
-    for i in [0..rows - 1]
-      while content[i].length < columns
-        content[i].push(' ')
+    widths = for i in [0..columns - 1]
+      Math.max 2, (swidth(cells[i]) for cells in content)...
 
-    widths = []
-    widths.push(2) for c in [0..columns - 1]
+    just = (string, col) ->
+      length = widths[col] - swidth(string)
+      switch justify[col]
+        when '::'
+          [front, back] = padding
+          padding(length / 2) + string + padding((length + 1) / 2)
+        when '-:'
+          padding(length) + string
+        when ':-'
+          string + padding(length)
+        else
+          string
 
-    max = (x, y) -> if x > y then x else y
+    formatted = for cells in content
+      addTailPipes joinCells (just(cells[i], i) for i in [0..columns - 1])
 
-    for row in content
+    formatline = addTailPipes joinCells (
       for i in [0..columns - 1]
-        widths[i] = max(swidth(row[i]), widths[i])
-
-    formatted = []
-    for row in content
-      line = []
-      for i in [0..columns - 1]
-        newtext = just(row[i], justify[i], widths[i])
-        line.push(newtext)
-
-      if @keepFirstAndLastPipes
-        formatted.push('|' + line.join('|') + '|')
-      else
-        formatted.push(line.join('|'))
-
-    formattedformatline = []
-    for i in [0..columns - 1]
-      newtext = justify[i][0] +
-        '-'.repeat((widths[i] - 2)) +
-        justify[i][justify[i].length - 1]
-      formattedformatline.push(newtext)
-
-    if @keepFirstAndLastPipes
-      formatline = '|' + formattedformatline.join('|') + '|'
-    else
-      formatline = formattedformatline.join('|')
+        [front, back] = justify[i]
+        front + padding(widths[i] - 2, '-') + back
+      )
 
     formatted.splice(formatrow, 0, formatline)
-    fmtstr = formatted.join('\n') + '\n'
-    fmtstr = '\n' + fmtstr if headerline.length is 0 and text[1] isnt ''
-    return fmtstr
+
+    return (if headerline.length is 0 and text[1] isnt '' then '\n' else '') +
+      formatted.join('\n') + '\n'
 
   regex: ///
     ( # header capture
