@@ -320,6 +320,25 @@ describe "When formatting a table", ->
       "|:-----|:------|:-----|:-----|:--------|\n"+
       "| asd  |       |      |      |         |\n"+
       "| dsa  |       |      |      |         |\n"
+  ,
+    # regression test for #17
+    test:
+      """
+      | **Name**        | **Unicode**                           | **Unicode Name**                                      | **ASCII Dec**  |
+      |:----------------|:--------------------------------------|:------------------------------------------------------|:---------------|
+      | Digits          | The code points U+0030 through U+0039 | DIGIT ZERO through DIGIT NINE                         | 48 through 57  |
+      | CA­PI­TAL-LETTERS | The code points U+0041 through U+005A | LATIN CA­PI­TAL LET­TER A through LATIN CA­PI­TAL LET­TER Z | 65 through 90  |
+      | SMALL-LETTERS   | The code points U+0061 through U+007A | LATIN SMALL LET­TER A through LATIN SMALL LET­TER Z     | 97 through 122 |
+      """
+    expected:
+      """
+      | **Name**        | **Unicode**                           | **Unicode Name**                                      | **ASCII Dec**  |
+      |:----------------|:--------------------------------------|:------------------------------------------------------|:---------------|
+      | Digits          | The code points U+0030 through U+0039 | DIGIT ZERO through DIGIT NINE                         | 48 through 57  |
+      | CA­PI­TAL-LETTERS | The code points U+0041 through U+005A | LATIN CA­PI­TAL LET­TER A through LATIN CA­PI­TAL LET­TER Z | 65 through 90  |
+      | SMALL-LETTERS   | The code points U+0061 through U+007A | LATIN SMALL LET­TER A through LATIN SMALL LET­TER Z     | 97 through 122 |
+
+      """
   ]
   nonTables=[
     "aaa|dafdas|adfas\n"+
