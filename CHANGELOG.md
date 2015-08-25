@@ -1,3 +1,9 @@
+## 2.5.3
+* Ignore common zero-width unicode characters for cell width (#17)
+
+## 2.5.2
+* Bogus release (no changes)
+
 ## 2.5.1
 * Fix #16
 
