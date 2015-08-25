@@ -26,7 +26,7 @@ module.exports =
     activate: ->
       @tableFormatter = new TableFormatter()
       #Register command to workspace
-      @command=atom.commands.add "atom-text-editor",
+      @command = atom.commands.add "atom-text-editor",
         "markdown-table-formatter:format", (event) =>
           @tableFormatter.format(event.target.getModel())
 
