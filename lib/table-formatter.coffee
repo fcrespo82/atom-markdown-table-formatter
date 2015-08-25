@@ -1,6 +1,12 @@
 {CompositeDisposable,Range} = require('atom')
 wcswidth = require 'wcwidth'
 
+# DEBUG = true
+
+swidth = (str) ->
+  zwcrx = /[\u200B-\u200D\uFEFF\u00AD]/g
+  wcswidth(str) - ( str.match(zwcrx)?.length or 0 )
+
 module.exports =
 class TableFormatter
   subscriptions: []
@@ -67,7 +73,7 @@ class TableFormatter
 
   formatTable: (text) ->
     just = (string, type, n) ->
-      length = n - wcswidth(string)
+      length = n - swidth(string)
       if type == '::'
         return ' '.repeat(length/2) + string + ' '.repeat((length+1)/2)
       else if type == '-:'
@@ -128,7 +134,7 @@ class TableFormatter
 
     for row in content
       for i in [0..columns-1]
-        widths[i] = max(wcswidth(row[i]), widths[i])
+        widths[i] = max(swidth(row[i]), widths[i])
 
     formatted = []
     for row in content
@@ -154,7 +160,7 @@ class TableFormatter
     else
       formatline = formattedformatline.join('|')
 
-    formatted.splice(formatrow, 0, [formatline])
+    formatted.splice(formatrow, 0, formatline)
     fmtstr = formatted.join('\n')+'\n'
     fmtstr = '\n'+fmtstr if headerline.length==0 and text[1]!=''
     return fmtstr
