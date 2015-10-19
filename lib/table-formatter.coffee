@@ -68,8 +68,9 @@ class TableFormatter
     myIterator = (obj) =>
       obj.replace(@formatTable(obj.match))
 
-    for range in selectionsRanges
-      editor.backwardsScanInBufferRange(@regex, range, myIterator)
+    editor.getBuffer().transact =>
+      for range in selectionsRanges
+        editor.backwardsScanInBufferRange(@regex, range, myIterator)
 
   formatTable: (text) ->
     padding = (len, str = ' ') -> str.repeat len
