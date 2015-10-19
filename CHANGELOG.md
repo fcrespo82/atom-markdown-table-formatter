@@ -1,3 +1,8 @@
+## 2.5.4
+* Tests code cleanup
+* Raise minimal compatible Atom version to 1.0.0
+* Wrap all changes into a single undo transaction
+
 ## 2.5.3
 * Ignore common zero-width unicode characters for cell width (#17)
 
