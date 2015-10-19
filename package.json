@@ -6,7 +6,7 @@
   "repository": "https://github.com/fcrespo82/atom-markdown-table-formatter",
   "license": "MIT",
   "engines": {
-    "atom": ">=0.135.0"
+    "atom": ">=1.0.0 <2.0.0"
   },
   "dependencies": {
     "wcwidth": "1.*"
