@@ -1,3 +1,6 @@
+## 2.5.5
+* Added some usage information to the README
+
 ## 2.5.4
 * Tests code cleanup
 * Raise minimal compatible Atom version to 1.0.0
