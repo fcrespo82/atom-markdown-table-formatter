@@ -104,17 +104,19 @@ class TableFormatter
 
     justify = for cell in splitCells stripTailPipes formatline
       [first, ..., last] = cell.trim()
-      switch ends = (first ? ':') + (last ? '')
+      switch ends = (first ? ':') + (last ? '-')
         when '::', '-:' then ends
+        when '--'
+          if @defaultTableJustification == 'Left'
+            ':-'
+          else if @defaultTableJustification == 'Center'
+            '::'
+          else if @defaultTableJustification == 'Right'
+            '-:'
+          else
+            ':-'
         else
-            if @defaultTableJustification == 'Left'
-              ':-'
-            else if @defaultTableJustification == 'Center'
-              '::'
-            else if @defaultTableJustification == 'Right'
-              '-:'
-            else
-              ':-'
+          ':-'
 
     columns = justify.length
 
@@ -167,10 +169,10 @@ class TableFormatter
     )
     ( # format capture
       (?:
-        \|\ *:?-+:?\ *            # format starting w/pipe
-        |\|?(?:\ *:?-+:?\ *\|)+   # or separated by pipe
+        \|\ *:?-*:?\ *            # format starting w/pipe
+        |\|?(?:\ *:?-*:?\ *\|)+   # or separated by pipe
       )
-      (?:\ *:?-+:?\ *)?           # maybe w/o trailing pipe
+      (?:\ *:?-*:?\ *)?           # maybe w/o trailing pipe
       \ *                         # maybe trailing whitespace
       \r?\n                       # newline
     )

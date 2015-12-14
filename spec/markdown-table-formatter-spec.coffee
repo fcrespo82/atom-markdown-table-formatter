@@ -443,49 +443,49 @@ describe "When formatting a table", ->
   ]
   testTablesDefaultLeft = [
       test: """
-        |First Header|Second Header|
-        |-|-|
-        |Content|Content|
-        |Content|Content|
+        |First Header|Second Header|Third Header|
+        |-|-:|:-:|
+        |Content|Content|Content|
+        |Content|Content|Content|
 
         """
       expected: """
-        | First Header | Second Header |
-        |:-------------|:--------------|
-        | Content      | Content       |
-        | Content      | Content       |
+        | First Header | Second Header | Third Header |
+        |:-------------|--------------:|:------------:|
+        | Content      |       Content |   Content    |
+        | Content      |       Content |   Content    |
 
         """
   ]
   testTablesDefaultCenter = [
       test: """
-        |First Header|Second Header|
-        |-|-|
-        |Content|Content|
-        |Content|Content|
+        |First Header|Second Header|Third Header|
+        |-|:-|::|
+        |Content|Content|Content|
+        |Content|Content|Content|
 
         """
       expected: """
-        | First Header | Second Header |
-        |:------------:|:-------------:|
-        |   Content    |    Content    |
-        |   Content    |    Content    |
+        | First Header | Second Header | Third Header |
+        |:------------:|:--------------|:------------:|
+        |   Content    | Content       |   Content    |
+        |   Content    | Content       |   Content    |
 
         """
   ]
   testTablesDefaultRight = [
       test: """
         |First Header|Second Header|
-        |-|-|
+        |-|:-|
         |Content|Content|
         |Content|Content|
 
         """
       expected: """
         | First Header | Second Header |
-        |-------------:|--------------:|
-        |      Content |       Content |
-        |      Content |       Content |
+        |-------------:|:--------------|
+        |      Content | Content       |
+        |      Content | Content       |
 
         """
   ]
@@ -645,6 +645,21 @@ describe "When formatting a table", ->
       formatted = MarkdownTableFormatter.tableFormatter.formatTable rxtable
       expect(formatted).toEqual(table.expected)
 
+  it "should properly work with editor", ->
+    editor = atom.workspace.buildTextEditor()
+    editor.getGrammar().scopeName = 'source.gfm'
+    expected = ""
+    for table in testTables
+      text = nonTables[Math.floor(Math.random() * nonTables.length)]
+      editor.setText(editor.getText() + "\n" + text + "\n" + table.test)
+      expected += "\n" + text + "\n" + table.expected
+    MarkdownTableFormatter.tableFormatter.spacePadding = 1
+    MarkdownTableFormatter.tableFormatter.keepFirstAndLastPipes = true
+    MarkdownTableFormatter.tableFormatter.autoSelectEntireDocument = true
+    MarkdownTableFormatter.tableFormatter.formatOnSave = false
+    MarkdownTableFormatter.tableFormatter.format editor
+    expect(editor.getText()).toEqual(expected)
+
   it "should properly format this table", ->
     MarkdownTableFormatter.tableFormatter.spacePadding = 1
     MarkdownTableFormatter.tableFormatter.keepFirstAndLastPipes = true
@@ -677,18 +692,3 @@ describe "When formatting a table", ->
       rxtable = rx.exec(table.test)
       formatted = MarkdownTableFormatter.tableFormatter.formatTable rxtable
       expect(formatted).toEqual(table.expected)
-
-  it "should properly work with editor", ->
-    editor = atom.workspace.buildTextEditor()
-    editor.getGrammar().scopeName = 'source.gfm'
-    expected = ""
-    for table in testTables
-      text = nonTables[Math.floor(Math.random() * nonTables.length)]
-      editor.setText(editor.getText() + "\n" + text + "\n" + table.test)
-      expected += "\n" + text + "\n" + table.expected
-    MarkdownTableFormatter.tableFormatter.spacePadding = 1
-    MarkdownTableFormatter.tableFormatter.keepFirstAndLastPipes = true
-    MarkdownTableFormatter.tableFormatter.autoSelectEntireDocument = true
-    MarkdownTableFormatter.tableFormatter.formatOnSave = false
-    MarkdownTableFormatter.tableFormatter.format editor
-    expect(editor.getText()).toEqual(expected)

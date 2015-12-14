@@ -1,4 +1,7 @@
-## 2.6
+## 2.7.1
+* Bugfix for misinterpretation of default table Justification
+
+## 2.6.0
 * Added the option to set the default justification for tables that have only a \'-\' on the formatting line
 
 ## 2.5.5
