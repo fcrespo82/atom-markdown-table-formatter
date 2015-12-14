@@ -1,4 +1,3 @@
-{TextEditor} = require 'atom'
 MarkdownTableFormatter = require '../lib/markdown-table-formatter'
 
 describe "When formatting a table", ->
@@ -442,6 +441,54 @@ describe "When formatting a table", ->
 
       """
   ]
+  testTablesDefaultLeft = [
+      test: """
+        |First Header|Second Header|
+        |-|-|
+        |Content|Content|
+        |Content|Content|
+
+        """
+      expected: """
+        | First Header | Second Header |
+        |:-------------|:--------------|
+        | Content      | Content       |
+        | Content      | Content       |
+
+        """
+  ]
+  testTablesDefaultCenter = [
+      test: """
+        |First Header|Second Header|
+        |-|-|
+        |Content|Content|
+        |Content|Content|
+
+        """
+      expected: """
+        | First Header | Second Header |
+        |:------------:|:-------------:|
+        |   Content    |    Content    |
+        |   Content    |    Content    |
+
+        """
+  ]
+  testTablesDefaultRight = [
+      test: """
+        |First Header|Second Header|
+        |-|-|
+        |Content|Content|
+        |Content|Content|
+
+        """
+      expected: """
+        | First Header | Second Header |
+        |-------------:|--------------:|
+        |      Content |       Content |
+        |      Content |       Content |
+
+        """
+  ]
   nonTables = [
     """
     aaa|dafdas|adfas
@@ -598,8 +645,41 @@ describe "When formatting a table", ->
       formatted = MarkdownTableFormatter.tableFormatter.formatTable rxtable
       expect(formatted).toEqual(table.expected)
 
+  it "should properly format this table", ->
+    MarkdownTableFormatter.tableFormatter.spacePadding = 1
+    MarkdownTableFormatter.tableFormatter.keepFirstAndLastPipes = true
+    MarkdownTableFormatter.tableFormatter.defaultTableJustification = 'Left'
+    rx = MarkdownTableFormatter.tableFormatter.regex
+    for table in testTablesDefaultLeft
+      rx.lastIndex = 0
+      rxtable = rx.exec(table.test)
+      formatted = MarkdownTableFormatter.tableFormatter.formatTable rxtable
+      expect(formatted).toEqual(table.expected)
+
+  it "should properly format this table", ->
+    MarkdownTableFormatter.tableFormatter.spacePadding = 1
+    MarkdownTableFormatter.tableFormatter.keepFirstAndLastPipes = true
+    MarkdownTableFormatter.tableFormatter.defaultTableJustification = 'Center'
+    rx = MarkdownTableFormatter.tableFormatter.regex
+    for table in testTablesDefaultCenter
+      rx.lastIndex = 0
+      rxtable = rx.exec(table.test)
+      formatted = MarkdownTableFormatter.tableFormatter.formatTable rxtable
+      expect(formatted).toEqual(table.expected)
+
+  it "should properly format this table", ->
+    MarkdownTableFormatter.tableFormatter.spacePadding = 1
+    MarkdownTableFormatter.tableFormatter.keepFirstAndLastPipes = true
+    MarkdownTableFormatter.tableFormatter.defaultTableJustification = 'Right'
+    rx = MarkdownTableFormatter.tableFormatter.regex
+    for table in testTablesDefaultRight
+      rx.lastIndex = 0
+      rxtable = rx.exec(table.test)
+      formatted = MarkdownTableFormatter.tableFormatter.formatTable rxtable
+      expect(formatted).toEqual(table.expected)
+
   it "should properly work with editor", ->
-    editor = new TextEditor(atom.workspace)
+    editor = atom.workspace.buildTextEditor()
     editor.getGrammar().scopeName = 'source.gfm'
     expected = ""
     for table in testTables

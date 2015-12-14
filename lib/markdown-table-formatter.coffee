@@ -22,6 +22,12 @@ module.exports =
         description:
           'Keep first and last pipes "|" in table formatting.
           Tables are easier to format when pipes are kept'
+      defaultTableJustification:
+        type: 'string'
+        default: 'Left'
+        enum: ['Left', 'Center', 'Right']
+        description:
+            'Defines the default justification for tables that have only a \'-\' on the formatting line'
 
     activate: ->
       @tableFormatter = new TableFormatter()

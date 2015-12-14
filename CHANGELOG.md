@@ -1,3 +1,6 @@
+## 2.6
+* Added the option to set the default justification for tables that have only a \'-\' on the formatting line
+
 ## 2.5.5
 * Added some usage information to the README
 

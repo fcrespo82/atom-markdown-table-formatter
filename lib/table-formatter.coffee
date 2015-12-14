@@ -34,6 +34,8 @@ class TableFormatter
       @keepFirstAndLastPipes = newValue
     @readConfig "formatOnSave", ({newValue}) =>
       @formatOnSave = newValue
+    @readConfig "defaultTableJustification", ({newValue}) =>
+      @defaultTableJustification = newValue
 
   destroy: ->
     @subscriptions.dispose()
@@ -104,7 +106,15 @@ class TableFormatter
       [first, ..., last] = cell.trim()
       switch ends = (first ? ':') + (last ? '')
         when '::', '-:' then ends
-        else ':-'
+        else
+            if @defaultTableJustification == 'Left'
+              ':-'
+            else if @defaultTableJustification == 'Center'
+              '::'
+            else if @defaultTableJustification == 'Right'
+              '-:'
+            else
+              ':-'
 
     columns = justify.length
 
