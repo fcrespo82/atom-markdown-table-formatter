@@ -72,7 +72,7 @@ class TableFormatter
 
     editor.getBuffer().transact =>
       for range in selectionsRanges
-        editor.backwardsScanInBufferRange(@regex, range, myIterator)
+        editor.scanInBufferRange(@regex, range, myIterator)
 
   formatTable: (text) ->
     padding = (len, str = ' ') -> str.repeat len
