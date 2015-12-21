@@ -1,3 +1,6 @@
+## 2.7.2
+* Bugfixes (closes #23, #24)
+
 ## 2.7.1
 * Bugfix for misinterpretation of default table Justification
 
