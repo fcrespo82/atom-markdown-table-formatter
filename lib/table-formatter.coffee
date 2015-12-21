@@ -72,7 +72,7 @@ class TableFormatter
 
     editor.getBuffer().transact =>
       for range in selectionsRanges
-        editor.backwardsScanInBufferRange(@regex, range, myIterator)
+        editor.scanInBufferRange(@regex, range, myIterator)
 
   formatTable: (text) ->
     padding = (len, str = ' ') -> str.repeat len
@@ -169,10 +169,10 @@ class TableFormatter
     )
     ( # format capture
       (?:
-        \|\ *:?-*:?\ *            # format starting w/pipe
-        |\|?(?:\ *:?-*:?\ *\|)+   # or separated by pipe
+        \|\ *(?::?-+:?|::)\ *            # format starting w/pipe
+        |\|?(?:\ *(?::?-+:?|::)\ *\|)+   # or separated by pipe
       )
-      (?:\ *:?-*:?\ *)?           # maybe w/o trailing pipe
+      (?:\ *(?::?-+:?|::)\ *)?           # maybe w/o trailing pipe
       \ *                         # maybe trailing whitespace
       \r?\n                       # newline
     )
