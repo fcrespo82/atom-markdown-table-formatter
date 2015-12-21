@@ -16,7 +16,7 @@ There are two basic ways of using this plugin.
 
 ### Settings & Keybindings
 
-![Settings image, go to github to see](https://github.com/fcrespo82/atom-markdown-table-formatter/blob/master/settings.png)
+![Settings image](https://github.com/fcrespo82/atom-markdown-table-formatter/raw/master/settings.png)
 
 ## Tips
 
