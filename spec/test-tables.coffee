@@ -438,4 +438,18 @@ module.exports =
       | SMALL-LETTERS   | The code points U+0061 through U+007A | LATIN SMALL LET­TER A through LATIN SMALL LET­TER Z     | 97 through 122 |
 
       """
+  ,
+    # regression test for #24
+    test: """
+      |
+      |-|-|-|-|
+      |table | with |empty |header|
+
+      """
+    expected:"""
+      |       |      |       |        |
+      |:------|:-----|:------|:-------|
+      | table | with | empty | header |
+
+      """
   ]
