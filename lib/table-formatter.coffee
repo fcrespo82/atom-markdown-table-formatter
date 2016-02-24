@@ -36,12 +36,14 @@ class TableFormatter
       @formatOnSave = newValue
     @readConfig "defaultTableJustification", ({newValue}) =>
       @defaultTableJustification = newValue
+    @readConfig "markdownGrammarScopes", ({newValue}) =>
+      @markdownGrammarScopes = newValue
 
   destroy: ->
     @subscriptions.dispose()
 
   format: (editor, force) ->
-    if editor.getGrammar().scopeName != 'source.gfm'
+    if not editor.getGrammar().scopeName in @markdownGrammarScopes
       return
 
     selectionsRanges = editor.getSelectedBufferRanges()
