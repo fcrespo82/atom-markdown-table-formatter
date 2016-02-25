@@ -64,12 +64,15 @@ describe "markdown-table-formatter", ->
 
     beforeEach ->
       editor = atom.workspace.buildTextEditor()
-      editor.getGrammar().scopeName = 'source.gfm'
       MarkdownTableFormatter.tableFormatter.spacePadding = 1
       MarkdownTableFormatter.tableFormatter.keepFirstAndLastPipes = true
       MarkdownTableFormatter.tableFormatter.defaultTableJustification = 'Left'
       MarkdownTableFormatter.tableFormatter.autoSelectEntireDocument = true
       MarkdownTableFormatter.tableFormatter.formatOnSave = false
+      MarkdownTableFormatter.tableFormatter.markdownGrammarScopes = ['source.gfm']
+      waitsForPromise ->
+        atom.packages.activatePackage('language-gfm').then ->
+          editor.setGrammar(atom.grammars.grammarForScopeName('source.gfm'))
 
     testSuite test
 

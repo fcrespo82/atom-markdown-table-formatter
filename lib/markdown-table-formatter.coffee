@@ -27,7 +27,17 @@ module.exports =
         default: 'Left'
         enum: ['Left', 'Center', 'Right']
         description:
-            'Defines the default justification for tables that have only a \'-\' on the formatting line'
+          'Defines the default justification for tables that have only a
+          \'-\' on the formatting line'
+      markdownGrammarScopes:
+        type: 'array'
+        default: ['source.gfm']
+        description:
+          'File grammar scopes that will be considered Markdown by this package (comma-separated).
+          Run \'Editor: Log Cursor Scope\' command to see what grammar scope
+          is used by your grammar. Top entry is usually file grammar scope.'
+        items:
+          type: 'string'
 
     activate: ->
       @tableFormatter = new TableFormatter()
