@@ -43,7 +43,7 @@ class TableFormatter
     @subscriptions.dispose()
 
   format: (editor, force) ->
-    if not editor.getGrammar().scopeName in @markdownGrammarScopes
+    if not (editor.getGrammar().scopeName in @markdownGrammarScopes)
       return
 
     selectionsRanges = editor.getSelectedBufferRanges()
