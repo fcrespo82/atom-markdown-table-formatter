@@ -1,3 +1,11 @@
+## 2.8.1
+* [Change] Safeguard in cases that the editor was not instantiated
+
+## 2.8.0
+* [New] Added the option to choose in which grammars the plugin run
+* [Fix] Changed if test to the check scope names
+* [Change] Updated settings image
+
 ## 2.7.2
 * Bugfixes (closes #23, #24)
 
