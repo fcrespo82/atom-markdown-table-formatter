@@ -1,3 +1,6 @@
+## 2.8.3
+* [Fix] #30 regression
+
 ## 2.8.2
 * [Fix] _this.getModel is not a function
 
