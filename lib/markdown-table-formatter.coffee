@@ -44,7 +44,7 @@ module.exports =
       #Register command to workspace
       @command = atom.commands.add "atom-text-editor",
         "markdown-table-formatter:format", (event) =>
-          editor = event.target.getModel()
+          editor = event?.target?.getModel?()
           if editor?
             @tableFormatter.format(editor)
 
