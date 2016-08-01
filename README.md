@@ -20,6 +20,10 @@ There are two basic ways of using this plugin.
 
 ## Tips
 
+### Enable Markdown Table Formatter for the current file type
+
+To enable Markdown Table Formatter for your current file type: put your cursor in the file, open the Command Palette <kbd>⌘ (CMD)</kbd>+<kbd>⇧ (SHIFT)</kbd>+<kbd>P</kbd>, and run the `Editor: Log Cursor Scope` command. This will trigger a notification which will contain a list of scopes. The first scope that's listed is the one you should add to the list of scopes in the settings for the Markdown Table Formatter package.
+
 ### How to style the tables correctly if you use non-monospace fonts
 
 ```css
