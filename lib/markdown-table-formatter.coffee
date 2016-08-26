@@ -38,6 +38,12 @@ module.exports =
           is used by your grammar. Top entry is usually file grammar scope.'
         items:
           type: 'string'
+      limitLastColumnPadding:
+        type: 'boolean'
+        default: true
+        description:
+          'Do not pad the last column to more than your editor\'s
+          preferredLineLength setting.'
 
     activate: ->
       @tableFormatter = new TableFormatter()

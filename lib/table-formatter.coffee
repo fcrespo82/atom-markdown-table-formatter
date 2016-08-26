@@ -38,6 +38,8 @@ class TableFormatter
       @defaultTableJustification = newValue
     @readConfig "markdownGrammarScopes", ({newValue}) =>
       @markdownGrammarScopes = newValue
+    @readConfig "limitLastColumnPadding", ({newValue}) =>
+      @limitLastColumnPadding = newValue
 
   destroy: ->
     @subscriptions.dispose()
@@ -45,6 +47,8 @@ class TableFormatter
   format: (editor, force) ->
     if not (editor.getGrammar().scopeName in @markdownGrammarScopes)
       return
+
+    @pll = atom.config.get('editor.preferredLineLength')
 
     selectionsRanges = editor.getSelectedBufferRanges()
 
@@ -77,7 +81,7 @@ class TableFormatter
         editor.scanInBufferRange(@regex, range, myIterator)
 
   formatTable: (text) ->
-    padding = (len, str = ' ') -> str.repeat len
+    padding = (len, str = ' ') -> str.repeat Math.max len, 0
 
     stripTailPipes = (str) ->
       str.trim().replace /(^\||\|$)/g, ""
@@ -134,8 +138,17 @@ class TableFormatter
     widths = for i in [0..columns - 1]
       Math.max 2, (swidth(cells[i]) for cells in content)...
 
+    if @limitLastColumnPadding
+      sum = (arr) -> arr.reduce (x, y) -> x + y
+      wsum = sum(widths)
+      if widths.length and wsum > @pll
+        prewsum = sum(widths[...-1])
+        widths[widths.length-1] = Math.max (@pll -
+          prewsum -
+          widths.length - 1), 0
+
     just = (string, col) ->
-      length = widths[col] - swidth(string)
+      length = Math.max widths[col] - swidth(string), 0
       switch justify[col]
         when '::'
           [front, back] = padding
