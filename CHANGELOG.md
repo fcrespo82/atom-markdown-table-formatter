@@ -1,3 +1,6 @@
+## 2.8.4
+* Added limitLastColumnPadding setting to generate less padding for tables where the last column runs long
+
 ## 2.8.3
 * [Fix] #30 regression
 
