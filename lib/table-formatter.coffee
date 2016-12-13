@@ -145,7 +145,9 @@ class TableFormatter
         prewsum = sum(widths[...-1])
         widths[widths.length-1] = Math.max (@pll -
           prewsum -
-          widths.length - 1), 0
+          widths.length - 1), 3
+          # Need at least :-- for github to recognize a column
+        console.log widths
 
     just = (string, col) ->
       length = Math.max widths[col] - swidth(string), 0
