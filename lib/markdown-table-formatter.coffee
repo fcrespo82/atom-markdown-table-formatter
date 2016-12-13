@@ -40,7 +40,7 @@ module.exports =
           type: 'string'
       limitLastColumnPadding:
         type: 'boolean'
-        default: true
+        default: false
         description:
           'Do not pad the last column to more than your editor\'s
           preferredLineLength setting.'
