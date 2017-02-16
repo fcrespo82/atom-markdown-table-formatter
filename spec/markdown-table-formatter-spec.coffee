@@ -54,12 +54,19 @@ describe "markdown-table-formatter", ->
 
     testSuite test
 
-  runEditorTests = (grammar, fixture, scope) ->
+  runEditorTests = (grammar, fixture, scope, opts = {}) ->
+    opts.addGrammar ?= true
+    opts.selectBeforeTest ?= false
+
     describe "editor tests for #{grammar}", ->
       editor = null
 
       test = testFormat editorFormat = (input) ->
         editor.setText input
+        expect(editor.getText(), "editor text").toEqual(input)
+        if opts.selectBeforeTest
+          editor.setSelectedBufferRange(editor.getBuffer().getRange())
+          expect(editor.getSelectedText()).toEqual(input)
         atom.commands.dispatch atom.views.getView(editor), 'markdown-table-formatter:format'
         editor.getText()
 
@@ -74,10 +81,14 @@ describe "markdown-table-formatter", ->
           .then (ed) ->
             editor = ed
           .then ->
-            atom.commands.dispatch atom.views.getView(editor), 'markdown-table-formatter:enable-for-current-scope'
+            if opts.addGrammar
+              atom.commands.dispatch atom.views.getView(editor), 'markdown-table-formatter:enable-for-current-scope'
 
-      it "should have text.plain in grammarScopes", ->
-        expect(MarkdownTableFormatter.tableFormatter.markdownGrammarScopes).toContain(scope)
+      it "should #{if opts.addGrammar then '' else 'NOT '}have #{scope} in grammarScopes", ->
+        if opts.addGrammar
+          expect(MarkdownTableFormatter.tableFormatter.markdownGrammarScopes).toContain(scope)
+        else
+          expect(MarkdownTableFormatter.tableFormatter.markdownGrammarScopes).not.toContain(scope)
 
       testSuite test
 
@@ -106,3 +117,6 @@ describe "markdown-table-formatter", ->
 
   runEditorTests 'language-gfm', 'empty.md', 'source.gfm'
   runEditorTests 'language-text', 'empty.text', 'text.plain.null-grammar'
+  runEditorTests 'language-text', 'empty.text', 'text.plain.null-grammar',
+    addGrammar: false
+    selectBeforeTest: true
