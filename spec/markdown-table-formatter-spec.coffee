@@ -105,3 +105,4 @@ describe "markdown-table-formatter", ->
         test edtext, expected
 
   runEditorTests 'language-gfm', 'empty.md', 'source.gfm'
+  runEditorTests 'language-text', 'empty.text', 'text.plain.null-grammar'
