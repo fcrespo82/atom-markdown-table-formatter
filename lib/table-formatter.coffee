@@ -61,6 +61,10 @@ class TableFormatter
             new Range(bufferRange.start, srange.end),
             ({range}) ->
               start = range.start
+          if end.isLessThan(srange.end)
+            end = srange.end
+          if start.isGreaterThan(srange.start)
+            start = srange.start
           new Range(start, end)
 
     myIterator = (obj) =>
