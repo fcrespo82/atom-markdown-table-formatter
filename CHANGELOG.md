@@ -5,7 +5,7 @@
 * [Fix] #30 regression
 
 ## 2.8.2
-* [Fix] _this.getModel is not a function
+* [Fix] \_this.getModel is not a function
 
 ## 2.8.1
 * [Change] Safeguard in cases that the editor was not instantiated
