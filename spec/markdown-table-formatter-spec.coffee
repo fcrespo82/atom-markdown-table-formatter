@@ -54,47 +54,54 @@ describe "markdown-table-formatter", ->
 
     testSuite test
 
-  describe "editor tests", ->
-    editor = null
+  runEditorTests = (grammar, fixture, scope) ->
+    describe "editor tests for #{grammar}", ->
+      editor = null
 
-    test = testFormat editorFormat = (input) ->
-      editor.setText input
-      MarkdownTableFormatter.tableFormatter.format editor
-      editor.getText()
+      test = testFormat editorFormat = (input) ->
+        editor.setText input
+        atom.commands.dispatch atom.views.getView(editor), 'markdown-table-formatter:format'
+        editor.getText()
 
-    beforeEach ->
-      editor = atom.workspace.buildTextEditor()
-      MarkdownTableFormatter.tableFormatter.spacePadding = 1
-      MarkdownTableFormatter.tableFormatter.keepFirstAndLastPipes = true
-      MarkdownTableFormatter.tableFormatter.defaultTableJustification = 'Left'
-      MarkdownTableFormatter.tableFormatter.autoSelectEntireDocument = true
-      MarkdownTableFormatter.tableFormatter.formatOnSave = false
-      MarkdownTableFormatter.tableFormatter.markdownGrammarScopes = ['source.gfm']
-      waitsForPromise ->
-        atom.packages.activatePackage('language-gfm').then ->
-          editor.setGrammar(atom.grammars.grammarForScopeName('source.gfm'))
+      beforeEach ->
+        grammarPromise = atom.packages.activatePackage(grammar)
+        packagePromise = atom.packages.activatePackage('markdown-table-formatter')
+        waitsForPromise ->
+          Promise.all [grammarPromise, packagePromise]
+          .then ->
+            {sep} = require 'path'
+            atom.workspace.open("#{__dirname}#{sep}fixtures#{sep}#{fixture}")
+          .then (ed) ->
+            editor = ed
+          .then ->
+            atom.commands.dispatch atom.views.getView(editor), 'markdown-table-formatter:enable-for-current-scope'
 
-    testSuite test
+      it "should have text.plain in grammarScopes", ->
+        expect(MarkdownTableFormatter.tableFormatter.markdownGrammarScopes).toContain(scope)
 
-    it "shouldn't try to format non-tables", ->
-      for nonTable in nonTables
-        test nonTable, nonTable
+      testSuite test
 
-    describe "Tables at the end of document", ->
-      modTest = testFormat editorFormat, (text, rand) ->
-        nonTables[Math.floor(rand * nonTables.length)] + "\n" + text
-      testSuite modTest
+      it "shouldn't try to format non-tables", ->
+        for nonTable in nonTables
+          test nonTable, nonTable
 
-    describe "Tables at the beginning of document", ->
-      modTest = testFormat editorFormat, (text, rand) ->
-        text + "\n" + nonTables[Math.floor(rand * nonTables.length)]
-      testSuite modTest
+      describe "Tables at the end of document", ->
+        modTest = testFormat editorFormat, (text, rand) ->
+          nonTables[Math.floor(rand * nonTables.length)] + "\n" + text
+        testSuite modTest
 
-    it "should properly format large text", ->
-      edtext = ""
-      expected = ""
-      for table in testTables
-        text = nonTables[Math.floor(Math.random() * nonTables.length)]
-        edtext += "\n" + text + "\n" + table.test
-        expected += "\n" + text + "\n" + table.expected
-      test edtext, expected
+      describe "Tables at the beginning of document", ->
+        modTest = testFormat editorFormat, (text, rand) ->
+          text + "\n" + nonTables[Math.floor(rand * nonTables.length)]
+        testSuite modTest
+
+      it "should properly format large text", ->
+        edtext = ""
+        expected = ""
+        for table in testTables
+          text = nonTables[Math.floor(Math.random() * nonTables.length)]
+          edtext += "\n" + text + "\n" + table.test
+          expected += "\n" + text + "\n" + table.expected
+        test edtext, expected
+
+  runEditorTests 'language-gfm', 'empty.md', 'source.gfm'
