@@ -48,19 +48,19 @@ module.exports =
     activate: ->
       @tableFormatter = new TableFormatter()
       #Register command to workspace
-      @command = atom.commands.add "atom-text-editor",
-        "markdown-table-formatter:format": (event) =>
+      @command = atom.commands.add 'atom-text-editor',
+        'markdown-table-formatter:format': (event) =>
           editor = event?.target?.getModel?()
           if editor?
             @tableFormatter.format(editor)
-        "markdown-table-formatter:enable-for-current-scope": (event) ->
+        'markdown-table-formatter:enable-for-current-scope': (event) ->
           editor = event?.target?.getModel?()
           if editor?
             scope = editor.getGrammar().scopeName
             key = 'markdown-table-formatter.markdownGrammarScopes'
             current = atom.config.get(key)
             if not scope? or not scope
-              atom.notifications.addError "Could not determine editor grammar scope"
+              atom.notifications.addError 'Could not determine editor grammar scope'
             else if scope in current
               atom.notifications.addWarning "#{scope} already considered Markdown"
             else

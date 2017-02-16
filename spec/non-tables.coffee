@@ -1,13 +1,13 @@
 module.exports =
   [
-    """
+    '''
     aaa|dafdas|adfas
     ----\\t| ----\\t| ---
     asdf|asadf|sdfas
 
-    """
+    '''
 
-    """
+    '''
     Here’s the original Coffee Log after decoding:
     dayone://post?entry=#coffee #log
     If you wish, you can add a leading and tailing pipe to each line of the table.
@@ -31,9 +31,9 @@ module.exports =
     tend to look more like this:
     which is easy to type, but hard to read and edit. So the first command I made
     is a Python script that takes an ugly text table and makes it pretty. Here’s the code.
-    """
+    '''
 
-    """
+    '''
      1  #!/usr/bin/python
      2
      3  import sys
@@ -127,5 +127,5 @@ module.exports =
     91  # Read the input, process, and print.
     92  unformatted = sys.stdin.read()
     93  print normtable(unformatted)
-    """
+    '''
   ]

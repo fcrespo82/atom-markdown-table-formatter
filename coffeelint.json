@@ -38,5 +38,9 @@
   "spacing_after_comma": {
     "name": "spacing_after_comma",
     "level": "error"
+  },
+  "no_unnecessary_double_quotes": {
+    "name": "no_unnecessary_double_quotes",
+    "level": "warn"
   }
 }

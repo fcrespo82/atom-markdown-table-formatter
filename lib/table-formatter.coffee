@@ -25,13 +25,13 @@ class TableFormatter
       @[key] = value
 
   initConfig: ->
-    @readConfig "autoSelectEntireDocument"
-    @readConfig "spacePadding"
-    @readConfig "keepFirstAndLastPipes"
-    @readConfig "formatOnSave"
-    @readConfig "defaultTableJustification"
-    @readConfig "markdownGrammarScopes"
-    @readConfig "limitLastColumnPadding"
+    @readConfig 'autoSelectEntireDocument'
+    @readConfig 'spacePadding'
+    @readConfig 'keepFirstAndLastPipes'
+    @readConfig 'formatOnSave'
+    @readConfig 'defaultTableJustification'
+    @readConfig 'markdownGrammarScopes'
+    @readConfig 'limitLastColumnPadding'
     @readConfig 'preferredLineLength', 'editor'
 
   destroy: ->
@@ -78,7 +78,7 @@ class TableFormatter
     padding = (len, str = ' ') -> str.repeat Math.max len, 0
 
     stripTailPipes = (str) ->
-      str.trim().replace /(^\||\|$)/g, ""
+      str.trim().replace /(^\||\|$)/g, ''
 
     splitCells = (str) ->
       str.split '|'
