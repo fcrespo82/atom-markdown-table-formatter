@@ -34,8 +34,8 @@ module.exports =
         default: ['source.gfm']
         description:
           'File grammar scopes that will be considered Markdown by this package (comma-separated).
-          Run \'Editor: Log Cursor Scope\' command to see what grammar scope
-          is used by your grammar. Top entry is usually file grammar scope.'
+          Run \'Markdown Table Formatter: Enable For Current Scope\' command to
+          add current editor grammar to this setting.'
         items:
           type: 'string'
       limitLastColumnPadding:
