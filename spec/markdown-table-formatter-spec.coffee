@@ -63,10 +63,8 @@ describe "markdown-table-formatter", ->
 
       test = testFormat editorFormat = (input) ->
         editor.setText input
-        expect(editor.getText(), "editor text").toEqual(input)
         if opts.selectBeforeTest
           editor.setSelectedBufferRange(editor.getBuffer().getRange())
-          expect(editor.getSelectedText()).toEqual(input)
         atom.commands.dispatch atom.views.getView(editor), 'markdown-table-formatter:format'
         editor.getText()
 
