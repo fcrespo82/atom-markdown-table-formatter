@@ -38,14 +38,13 @@ class TableFormatter
     @subscriptions.dispose()
 
   format: (editor, force) ->
-    if not (editor.getGrammar().scopeName in @markdownGrammarScopes)
-      return
-
     selectionsRanges = editor.getSelectedBufferRanges()
 
     bufferRange = editor.getBuffer().getRange()
     selectionsRangesEmpty =
       selectionsRanges.every (i) -> i.isEmpty()
+    if not (editor.getGrammar().scopeName in @markdownGrammarScopes) and selectionsRangesEmpty
+      return
     if force or (selectionsRangesEmpty and @autoSelectEntireDocument)
       selectionsRanges = [bufferRange]
     else
