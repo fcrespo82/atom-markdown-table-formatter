@@ -34,8 +34,8 @@ module.exports =
         default: ['source.gfm']
         description:
           'File grammar scopes that will be considered Markdown by this package (comma-separated).
-          Run \'Editor: Log Cursor Scope\' command to see what grammar scope
-          is used by your grammar. Top entry is usually file grammar scope.'
+          Run \'Markdown Table Formatter: Enable For Current Scope\' command to
+          add current editor grammar to this setting.'
         items:
           type: 'string'
       limitLastColumnPadding:
@@ -48,11 +48,24 @@ module.exports =
     activate: ->
       @tableFormatter = new TableFormatter()
       #Register command to workspace
-      @command = atom.commands.add "atom-text-editor",
-        "markdown-table-formatter:format", (event) =>
+      @command = atom.commands.add 'atom-text-editor',
+        'markdown-table-formatter:format': (event) =>
           editor = event?.target?.getModel?()
           if editor?
             @tableFormatter.format(editor)
+        'markdown-table-formatter:enable-for-current-scope': (event) ->
+          editor = event?.target?.getModel?()
+          if editor?
+            scope = editor.getGrammar().scopeName
+            key = 'markdown-table-formatter.markdownGrammarScopes'
+            current = atom.config.get(key)
+            if not scope? or not scope
+              atom.notifications.addError 'Could not determine editor grammar scope'
+            else if scope in current
+              atom.notifications.addWarning "#{scope} already considered Markdown"
+            else
+              atom.config.set(key, [current..., scope])
+              atom.notifications.addSuccess "Successfully added #{scope} to Markdown scopes"
 
     deactivate: ->
       @command.dispose()

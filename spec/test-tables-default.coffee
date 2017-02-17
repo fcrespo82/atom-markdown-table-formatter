@@ -1,52 +1,52 @@
 module.exports =
   Left:
     [
-        test: """
+        test: '''
           |First Header|Second Header|Third Header|
           |-|-:|:-:|
           |Content|Content|Content|
           |Content|Content|Content|
 
-          """
-        expected: """
+          '''
+        expected: '''
           | First Header | Second Header | Third Header |
           |:-------------|--------------:|:------------:|
           | Content      |       Content |   Content    |
           | Content      |       Content |   Content    |
 
-          """
+          '''
     ]
   Center:
     [
-        test: """
+        test: '''
           |First Header|Second Header|Third Header|
           |-|:-|::|
           |Content|Content|Content|
           |Content|Content|Content|
 
-          """
-        expected: """
+          '''
+        expected: '''
           | First Header | Second Header | Third Header |
           |:------------:|:--------------|:------------:|
           |   Content    | Content       |   Content    |
           |   Content    | Content       |   Content    |
 
-          """
+          '''
     ]
   Right:
     [
-        test: """
+        test: '''
           |First Header|Second Header|
           |-|:-|
           |Content|Content|
           |Content|Content|
 
-          """
-        expected: """
+          '''
+        expected: '''
           | First Header | Second Header |
           |-------------:|:--------------|
           |      Content | Content       |
           |      Content | Content       |
 
-          """
+          '''
     ]

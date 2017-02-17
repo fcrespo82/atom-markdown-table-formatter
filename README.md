@@ -20,14 +20,30 @@ There are two basic ways of using this plugin.
 
 ## Tips
 
+### Using with `language-markdown` package
+
+Since `language-markdown` is a community package, auto-formatting entire document is not supported out-of-the box, but that is easy to fix, see next tip.
+
 ### Enable Markdown Table Formatter for the current file type
 
-To enable Markdown Table Formatter for your current file type: put your cursor in the file, open the Command Palette <kbd>⌘ (CMD)</kbd>+<kbd>⇧ (SHIFT)</kbd>+<kbd>P</kbd>, and run the `Editor: Log Cursor Scope` command. This will trigger a notification which will contain a list of scopes. The first scope that's listed is the one you should add to the list of scopes in the settings for the Markdown Table Formatter package.
+To enable Markdown Table Formatter for your current file type: put your cursor in the file, open the Command Palette <kbd>⌘ (CMD)</kbd>+<kbd>⇧ (SHIFT)</kbd>+<kbd>P</kbd>, and run the `Markdown Table Formatter: Enable For Current Scope` command. This will add grammar scope from current editor to the list of scopes in the settings for the Markdown Table Formatter package. You can edit this setting manually later if you want to.
+
+Formatting selection should work regardless though.
 
 ### How to style the tables correctly if you use non-monospace fonts
 
-```css
+Pre Atom-1.13:
+
+```less
 atom-text-editor::shadow .table.gfm {
+    font-family: monospace;
+}
+```
+
+Post Atom-1.13:
+
+```less
+atom-text-editor .syntax--table.syntax--gfm {
     font-family: monospace;
 }
 ```

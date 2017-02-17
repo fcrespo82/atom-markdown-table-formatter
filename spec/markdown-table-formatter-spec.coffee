@@ -3,21 +3,21 @@ testTables = require './test-tables'
 testTablesDefault = require './test-tables-default'
 nonTables = require './non-tables'
 
-describe "markdown-table-formatter", ->
+describe 'markdown-table-formatter', ->
   beforeEach ->
     waitsForPromise ->
       atom.packages.activatePackage('markdown-table-formatter')
 
-  it "should load correctly", ->
+  it 'should load correctly', ->
     expect(MarkdownTableFormatter).toBeDefined()
     expect(MarkdownTableFormatter.tableFormatter).toBeDefined()
 
-  describe "regex tests", ->
-    it "should match the regex", ->
+  describe 'regex tests', ->
+    it 'should match the regex', ->
       for table in testTables
         expect(table.test).toMatch(MarkdownTableFormatter.tableFormatter.regex)
 
-    it "should NOT match the regex", ->
+    it 'should NOT match the regex', ->
       for table in nonTables
         expect(table).not.toMatch(MarkdownTableFormatter.tableFormatter.regex)
 
@@ -27,7 +27,7 @@ describe "markdown-table-formatter", ->
     expect(formatter modifier(input, rand)).toEqual(modifier(expected, rand))
 
   testSuiteSingle = (test, tbls) ->
-    it "should properly format these tables", ->
+    it 'should properly format these tables', ->
       for table in tbls
         test table.test, table.expected
 
@@ -41,7 +41,7 @@ describe "markdown-table-formatter", ->
             MarkdownTableFormatter.tableFormatter.defaultTableJustification = just
         testSuiteSingle test, tbls
 
-  describe "format tests", ->
+  describe 'format tests', ->
     test = testFormat (input) ->
       rx = MarkdownTableFormatter.tableFormatter.regex
       rx.lastIndex = 0
@@ -54,47 +54,67 @@ describe "markdown-table-formatter", ->
 
     testSuite test
 
-  describe "editor tests", ->
-    editor = null
+  runEditorTests = (grammar, fixture, scope, opts = {}) ->
+    opts.addGrammar ?= true
+    opts.selectBeforeTest ?= false
 
-    test = testFormat editorFormat = (input) ->
-      editor.setText input
-      MarkdownTableFormatter.tableFormatter.format editor
-      editor.getText()
+    describe "editor tests for #{grammar}", ->
+      editor = null
 
-    beforeEach ->
-      editor = atom.workspace.buildTextEditor()
-      MarkdownTableFormatter.tableFormatter.spacePadding = 1
-      MarkdownTableFormatter.tableFormatter.keepFirstAndLastPipes = true
-      MarkdownTableFormatter.tableFormatter.defaultTableJustification = 'Left'
-      MarkdownTableFormatter.tableFormatter.autoSelectEntireDocument = true
-      MarkdownTableFormatter.tableFormatter.formatOnSave = false
-      MarkdownTableFormatter.tableFormatter.markdownGrammarScopes = ['source.gfm']
-      waitsForPromise ->
-        atom.packages.activatePackage('language-gfm').then ->
-          editor.setGrammar(atom.grammars.grammarForScopeName('source.gfm'))
+      test = testFormat editorFormat = (input) ->
+        editor.setText input
+        if opts.selectBeforeTest
+          editor.setSelectedBufferRange(editor.getBuffer().getRange())
+        atom.commands.dispatch atom.views.getView(editor), 'markdown-table-formatter:format'
+        editor.getText()
 
-    testSuite test
+      beforeEach ->
+        grammarPromise = atom.packages.activatePackage(grammar)
+        packagePromise = atom.packages.activatePackage('markdown-table-formatter')
+        waitsForPromise ->
+          Promise.all [grammarPromise, packagePromise]
+          .then ->
+            {sep} = require 'path'
+            atom.workspace.open("#{__dirname}#{sep}fixtures#{sep}#{fixture}")
+          .then (ed) ->
+            editor = ed
+          .then ->
+            if opts.addGrammar
+              atom.commands.dispatch atom.views.getView(editor), 'markdown-table-formatter:enable-for-current-scope'
 
-    it "shouldn't try to format non-tables", ->
-      for nonTable in nonTables
-        test nonTable, nonTable
+      it "should #{if opts.addGrammar then '' else 'NOT '}have #{scope} in grammarScopes", ->
+        if opts.addGrammar
+          expect(MarkdownTableFormatter.tableFormatter.markdownGrammarScopes).toContain(scope)
+        else
+          expect(MarkdownTableFormatter.tableFormatter.markdownGrammarScopes).not.toContain(scope)
 
-    describe "Tables at the end of document", ->
-      modTest = testFormat editorFormat, (text, rand) ->
-        nonTables[Math.floor(rand * nonTables.length)] + "\n" + text
-      testSuite modTest
+      testSuite test
 
-    describe "Tables at the beginning of document", ->
-      modTest = testFormat editorFormat, (text, rand) ->
-        text + "\n" + nonTables[Math.floor(rand * nonTables.length)]
-      testSuite modTest
+      it "shouldn't try to format non-tables", ->
+        for nonTable in nonTables
+          test nonTable, nonTable
 
-    it "should properly format large text", ->
-      edtext = ""
-      expected = ""
-      for table in testTables
-        text = nonTables[Math.floor(Math.random() * nonTables.length)]
-        edtext += "\n" + text + "\n" + table.test
-        expected += "\n" + text + "\n" + table.expected
-      test edtext, expected
+      describe 'Tables at the end of document', ->
+        modTest = testFormat editorFormat, (text, rand) ->
+          nonTables[Math.floor(rand * nonTables.length)] + '\n' + text
+        testSuite modTest
+
+      describe 'Tables at the beginning of document', ->
+        modTest = testFormat editorFormat, (text, rand) ->
+          text + '\n' + nonTables[Math.floor(rand * nonTables.length)]
+        testSuite modTest
+
+      it 'should properly format large text', ->
+        edtext = ''
+        expected = ''
+        for table in testTables
+          text = nonTables[Math.floor(Math.random() * nonTables.length)]
+          edtext += '\n' + text + '\n' + table.test
+          expected += '\n' + text + '\n' + table.expected
+        test edtext, expected
+
+  runEditorTests 'language-gfm', 'empty.md', 'source.gfm'
+  runEditorTests 'language-text', 'empty.text', 'text.plain.null-grammar'
+  runEditorTests 'language-text', 'empty.text', 'text.plain.null-grammar',
+    addGrammar: false
+    selectBeforeTest: true

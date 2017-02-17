@@ -18,43 +18,33 @@ class TableFormatter
       @subscriptions.add editor.getBuffer().onWillSave =>
         @format editor, true if @formatOnSave
 
-  readConfig: (key, callback) ->
-    key = 'markdown-table-formatter.' + key
-    @subscriptions.add atom.config.onDidChange key, callback
-    callback
-      newValue: atom.config.get(key)
-      oldValue: undefined
+  readConfig: (key, scope) ->
+    scope ?= 'markdown-table-formatter'
+    scopedKey = "#{scope}.#{key}"
+    @subscriptions.add atom.config.observe scopedKey, (value) =>
+      @[key] = value
 
   initConfig: ->
-    @readConfig "autoSelectEntireDocument", ({newValue}) =>
-      @autoSelectEntireDocument = newValue
-    @readConfig "spacePadding", ({newValue}) =>
-      @spacePadding = newValue
-    @readConfig "keepFirstAndLastPipes", ({newValue}) =>
-      @keepFirstAndLastPipes = newValue
-    @readConfig "formatOnSave", ({newValue}) =>
-      @formatOnSave = newValue
-    @readConfig "defaultTableJustification", ({newValue}) =>
-      @defaultTableJustification = newValue
-    @readConfig "markdownGrammarScopes", ({newValue}) =>
-      @markdownGrammarScopes = newValue
-    @readConfig "limitLastColumnPadding", ({newValue}) =>
-      @limitLastColumnPadding = newValue
+    @readConfig 'autoSelectEntireDocument'
+    @readConfig 'spacePadding'
+    @readConfig 'keepFirstAndLastPipes'
+    @readConfig 'formatOnSave'
+    @readConfig 'defaultTableJustification'
+    @readConfig 'markdownGrammarScopes'
+    @readConfig 'limitLastColumnPadding'
+    @readConfig 'preferredLineLength', 'editor'
 
   destroy: ->
     @subscriptions.dispose()
 
   format: (editor, force) ->
-    if not (editor.getGrammar().scopeName in @markdownGrammarScopes)
-      return
-
-    @pll = atom.config.get('editor.preferredLineLength')
-
     selectionsRanges = editor.getSelectedBufferRanges()
 
     bufferRange = editor.getBuffer().getRange()
     selectionsRangesEmpty =
       selectionsRanges.every (i) -> i.isEmpty()
+    if not (editor.getGrammar().scopeName in @markdownGrammarScopes) and selectionsRangesEmpty
+      return
     if force or (selectionsRangesEmpty and @autoSelectEntireDocument)
       selectionsRanges = [bufferRange]
     else
@@ -71,6 +61,10 @@ class TableFormatter
             new Range(bufferRange.start, srange.end),
             ({range}) ->
               start = range.start
+          if end.isLessThan(srange.end)
+            end = srange.end
+          if start.isGreaterThan(srange.start)
+            start = srange.start
           new Range(start, end)
 
     myIterator = (obj) =>
@@ -84,7 +78,7 @@ class TableFormatter
     padding = (len, str = ' ') -> str.repeat Math.max len, 0
 
     stripTailPipes = (str) ->
-      str.trim().replace /(^\||\|$)/g, ""
+      str.trim().replace /(^\||\|$)/g, ''
 
     splitCells = (str) ->
       str.split '|'
@@ -141,9 +135,9 @@ class TableFormatter
     if @limitLastColumnPadding
       sum = (arr) -> arr.reduce (x, y) -> x + y
       wsum = sum(widths)
-      if widths.length and wsum > @pll
+      if widths.length and wsum > @preferredLineLength
         prewsum = sum(widths[...-1])
-        widths[widths.length-1] = Math.max (@pll -
+        widths[widths.length - 1] = Math.max (@preferredLineLength -
           prewsum -
           widths.length - 1), 3
           # Need at least :-- for github to recognize a column
