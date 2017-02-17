@@ -1,3 +1,8 @@
+## 2.9.0
+* [Fix] Do not EVER contract selection ranges
+* [Change] Format selection for non-Markdown scopes
+* [New] Command to add current grammar to markdownGrammarScopes
+
 ## 2.8.4
 * Added limitLastColumnPadding setting to generate less padding for tables where the last column runs long
 
