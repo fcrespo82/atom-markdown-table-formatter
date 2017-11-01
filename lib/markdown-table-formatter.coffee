@@ -50,11 +50,13 @@ module.exports =
       #Register command to workspace
       @command = atom.commands.add 'atom-text-editor',
         'markdown-table-formatter:format': (event) =>
-          editor = event?.target?.getModel?()
+          editor = atom.workspace.getActiveTextEditor()
           if editor?
             @tableFormatter.format(editor)
+          else
+            atom.notifications.addError "Couldn't find the editor, doing nothing"
         'markdown-table-formatter:enable-for-current-scope': (event) ->
-          editor = event?.target?.getModel?()
+          editor = atom.workspace.getActiveTextEditor()
           if editor?
             scope = editor.getGrammar().scopeName
             key = 'markdown-table-formatter.markdownGrammarScopes'
@@ -66,6 +68,8 @@ module.exports =
             else
               atom.config.set(key, [current..., scope])
               atom.notifications.addSuccess "Successfully added #{scope} to Markdown scopes"
+          else
+            atom.notifications.addError "Couldn't find the editor, doing nothing"
 
     deactivate: ->
       @command.dispose()
