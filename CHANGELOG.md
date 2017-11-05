@@ -1,3 +1,6 @@
+## 2.9.1
+* [Fix] #44 - Events not triggering
+
 ## 2.9.0
 * [Fix] Do not EVER contract selection ranges
 * [Change] Format selection for non-Markdown scopes
