@@ -1,3 +1,7 @@
+## 2.9.2
+* Fix #26 (CRLF breaks whole-document formatting)
+* Add tests for CRLF (#26)
+
 ## 2.9.1
 * [Fix] #44 - Events not triggering
 
