@@ -6,9 +6,35 @@
   "repository": "https://github.com/fcrespo82/atom-markdown-table-formatter",
   "license": "MIT",
   "engines": {
-    "atom": ">=1.0.0 <2.0.0"
+    "atom": ">=1.23.0 <2.0.0"
+  },
+  "atomTestRunner": "./spec/runner.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "prettier": "prettier --write '**/*.ts'",
+    "prettier-check": "prettier -l '**/*.ts'",
+    "typecheck": "tsc --noEmit -p . && tsc --noEmit -p ./spec",
+    "lint": "tslint --project . && tslint --project ./spec",
+    "test": "npm run typecheck && npm run lint && npm run prettier-check"
   },
   "dependencies": {
-    "wcwidth": "1.*"
+    "wcwidth": "1.*",
+    "xregexp": "^3.2.0"
+  },
+  "devDependencies": {
+    "@types/atom": "^1.23.0",
+    "@types/chai": "^4.0.10",
+    "@types/mocha": "^2.2.45",
+    "@types/wcwidth": "^1.0.0",
+    "@types/xregexp": "^3.0.29",
+    "atom-haskell-tslint-rules": "^0.1.1",
+    "atom-mocha-test-runner": "^1.2.0",
+    "chai": "^4.1.2",
+    "mocha": "^4.1.0",
+    "prettier": "^1.9.2",
+    "ts-node": "^4.1.0",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.2",
+    "xregexp": "^3.2.0"
   }
 }
