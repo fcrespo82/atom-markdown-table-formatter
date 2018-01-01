@@ -68,11 +68,11 @@ class TableFormatter
           new Range(start, end)
 
     myIterator = (obj) =>
-      obj.replace(@formatTable(obj.match))
+      editor.setTextInBufferRange(obj.range, @formatTable(obj.match))
 
     editor.getBuffer().transact =>
       for range in selectionsRanges
-        editor.scanInBufferRange(@regex, range, myIterator)
+        editor.backwardsScanInBufferRange(@regex, range, myIterator)
 
   formatTable: (text) ->
     padding = (len, str = ' ') -> str.repeat Math.max len, 0
@@ -100,7 +100,7 @@ class TableFormatter
         [ 0, text[3] ]
       else
         [ 1, text[1] + text[3] ]
-    lines = data.trim().split('\n')
+    lines = data.trim().split(/\r?\n/)
 
     justify = for cell in splitCells stripTailPipes formatline
       [first, ..., last] = cell.trim()
@@ -173,7 +173,7 @@ class TableFormatter
   regex: ///
     ( # header capture
       (?:
-        (?:[^\n]*?\|[^\n]*)       # line w/ at least one pipe
+        (?:[^\r\n]*?\|[^\r\n]*)       # line w/ at least one pipe
         \ *                       # maybe trailing whitespace
       )?                          # maybe header
       (?:\r?\n|^)                 # newline
@@ -189,7 +189,7 @@ class TableFormatter
     )
     ( # body capture
       (?:
-        (?:[^\n]*?\|[^\n]*)       # line w/ at least one pipe
+        (?:[^\r\n]*?\|[^\r\n]*)       # line w/ at least one pipe
         \ *                       # maybe trailing whitespace
         (?:\r?\n|$)               # newline
       )+ # at least one
