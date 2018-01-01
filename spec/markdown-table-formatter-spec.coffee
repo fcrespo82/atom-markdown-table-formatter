@@ -57,16 +57,21 @@ describe 'markdown-table-formatter', ->
   runEditorTests = (grammar, fixture, scope, opts = {}) ->
     opts.addGrammar ?= true
     opts.selectBeforeTest ?= false
+    opts.crlf ?= '\n'
 
-    describe "editor tests for #{grammar}", ->
+    describe "editor tests for #{grammar} with #{JSON.stringify(opts.crlf)}", ->
       editor = null
 
-      test = testFormat editorFormat = (input) ->
+      editorFormat = (input) ->
         editor.setText input
         if opts.selectBeforeTest
           editor.setSelectedBufferRange(editor.getBuffer().getRange())
         atom.commands.dispatch atom.views.getView(editor), 'markdown-table-formatter:format'
         editor.getText()
+
+      modCrLf = (x) -> x.replace(/\n/g, opts.crlf)
+
+      test = testFormat editorFormat, modCrLf
 
       beforeEach ->
         grammarPromise = atom.packages.activatePackage(grammar)
@@ -78,6 +83,7 @@ describe 'markdown-table-formatter', ->
             atom.workspace.open("#{__dirname}#{sep}fixtures#{sep}#{fixture}")
           .then (ed) ->
             editor = ed
+            editor.getBuffer().setPreferredLineEnding(opts.crlf)
           .then ->
             if opts.addGrammar
               atom.commands.dispatch atom.views.getView(editor), 'markdown-table-formatter:enable-for-current-scope'
@@ -96,12 +102,12 @@ describe 'markdown-table-formatter', ->
 
       describe 'Tables at the end of document', ->
         modTest = testFormat editorFormat, (text, rand) ->
-          nonTables[Math.floor(rand * nonTables.length)] + '\n' + text
+          modCrLf nonTables[Math.floor(rand * nonTables.length)] + opts.crlf + text
         testSuite modTest
 
       describe 'Tables at the beginning of document', ->
         modTest = testFormat editorFormat, (text, rand) ->
-          text + '\n' + nonTables[Math.floor(rand * nonTables.length)]
+          modCrLf text + opts.crlf + nonTables[Math.floor(rand * nonTables.length)]
         testSuite modTest
 
       it 'should properly format large text', ->
@@ -109,12 +115,16 @@ describe 'markdown-table-formatter', ->
         expected = ''
         for table in testTables
           text = nonTables[Math.floor(Math.random() * nonTables.length)]
-          edtext += '\n' + text + '\n' + table.test
-          expected += '\n' + text + '\n' + table.expected
+          edtext += opts.crlf + text + opts.crlf + table.test
+          expected += opts.crlf + text + opts.crlf + table.expected
         test edtext, expected
 
   runEditorTests 'language-gfm', 'empty.md', 'source.gfm'
   runEditorTests 'language-text', 'empty.text', 'text.plain.null-grammar'
+  runEditorTests 'language-gfm', 'empty.md', 'source.gfm',
+    crlf: '\r\n'
+  runEditorTests 'language-text', 'empty.text', 'text.plain.null-grammar',
+    crlf: '\r\n'
   runEditorTests 'language-text', 'empty.text', 'text.plain.null-grammar',
     addGrammar: false
     selectBeforeTest: true
