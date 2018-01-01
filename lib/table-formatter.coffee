@@ -1,5 +1,6 @@
 {CompositeDisposable, Range} = require('atom')
 wcswidth = require 'wcwidth'
+regex = require './regex'
 
 swidth = (str) ->
   # zero-width Unicode characters that we should ignore for
@@ -9,8 +10,6 @@ swidth = (str) ->
 
 module.exports =
 class TableFormatter
-  subscriptions: []
-
   constructor: ->
     @subscriptions = new CompositeDisposable
     @initConfig()
@@ -70,9 +69,9 @@ class TableFormatter
     myIterator = (obj) =>
       editor.setTextInBufferRange(obj.range, @formatTable(obj.match))
 
-    editor.getBuffer().transact =>
+    editor.getBuffer().transact ->
       for range in selectionsRanges
-        editor.backwardsScanInBufferRange(@regex, range, myIterator)
+        editor.backwardsScanInBufferRange(regex, range, myIterator)
 
   formatTable: (text) ->
     padding = (len, str = ' ') -> str.repeat Math.max len, 0
@@ -169,29 +168,3 @@ class TableFormatter
 
     return (if headerline.length is 0 and text[1] isnt '' then '\n' else '') +
       formatted.join('\n') + '\n'
-
-  regex: ///
-    ( # header capture
-      (?:
-        (?:[^\r\n]*?\|[^\r\n]*)       # line w/ at least one pipe
-        \ *                       # maybe trailing whitespace
-      )?                          # maybe header
-      (?:\r?\n|^)                 # newline
-    )
-    ( # format capture
-      (?:
-        \|\ *(?::?-+:?|::)\ *            # format starting w/pipe
-        |\|?(?:\ *(?::?-+:?|::)\ *\|)+   # or separated by pipe
-      )
-      (?:\ *(?::?-+:?|::)\ *)?           # maybe w/o trailing pipe
-      \ *                         # maybe trailing whitespace
-      \r?\n                       # newline
-    )
-    ( # body capture
-      (?:
-        (?:[^\r\n]*?\|[^\r\n]*)       # line w/ at least one pipe
-        \ *                       # maybe trailing whitespace
-        (?:\r?\n|$)               # newline
-      )+ # at least one
-    )
-    ///g

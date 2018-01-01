@@ -2,6 +2,7 @@ MarkdownTableFormatter = require '../lib/markdown-table-formatter'
 testTables = require './test-tables'
 testTablesDefault = require './test-tables-default'
 nonTables = require './non-tables'
+regex = require '../lib/regex'
 
 describe 'markdown-table-formatter', ->
   beforeEach ->
@@ -15,11 +16,11 @@ describe 'markdown-table-formatter', ->
   describe 'regex tests', ->
     it 'should match the regex', ->
       for table in testTables
-        expect(table.test).toMatch(MarkdownTableFormatter.tableFormatter.regex)
+        expect(table.test).toMatch(regex)
 
     it 'should NOT match the regex', ->
       for table in nonTables
-        expect(table).not.toMatch(MarkdownTableFormatter.tableFormatter.regex)
+        expect(table).not.toMatch(regex)
 
   testFormat = (formatter, modifier) -> (input, expected) ->
     modifier ?= (x) -> x
@@ -43,7 +44,7 @@ describe 'markdown-table-formatter', ->
 
   describe 'format tests', ->
     test = testFormat (input) ->
-      rx = MarkdownTableFormatter.tableFormatter.regex
+      rx = regex
       rx.lastIndex = 0
       MarkdownTableFormatter.tableFormatter.formatTable rx.exec(input)
 

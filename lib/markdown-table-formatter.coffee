@@ -1,4 +1,4 @@
-TableFormatter = require './table-formatter.coffee'
+TableFormatter = require './table-formatter'
 
 module.exports =
     config:
