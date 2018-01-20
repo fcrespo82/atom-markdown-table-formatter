@@ -12,7 +12,6 @@ Based on the awesome [Improved Markdown table commands for TextMate](http://www.
 ```
 npm i
 ```
- - done!
  
 ## Usage
 
