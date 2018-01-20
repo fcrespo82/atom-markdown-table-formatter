@@ -7,7 +7,7 @@ Based on the awesome [Improved Markdown table commands for TextMate](http://www.
 [Changelog](https://github.com/fcrespo82/atom-markdown-table-formatter/blob/master/CHANGELOG.md)
 
 ## How to instal
-- to instal copy the directory to your atom plugin directory
+- copy the directory to your atom plugin directory
 - open the new directory and run 
 ```
 npm i
