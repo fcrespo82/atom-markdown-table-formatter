@@ -14,13 +14,13 @@ There are two basic ways of using this plugin.
 1. Select the table you want to format and then hit `alt-shift-T` to format it.
 2. If you didn't select any table the entire document (default) will be scanned, by the plugin, for tables and format all of them.
 
-## instal
+## How to instal
 - to instal copy the directory to your atom plugin directory
 - open the new directory and run 
 ```
 npm i
 ```
- - done
+ - done!
 
 ### Settings & Keybindings
 
