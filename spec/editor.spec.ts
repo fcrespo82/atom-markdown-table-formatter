@@ -70,7 +70,7 @@ describe('editor tests', function() {
               atom.views.getView(editor),
               'markdown-table-formatter:enable-for-current-scope',
             ),
-          ).to.equal(true)
+          ).to.be.ok
         }
       })
 
